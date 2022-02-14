@@ -29,10 +29,10 @@ int errorArg(std::string arg)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
-        return 84;
-    if (errorArg(argv[1]) == 84)
-        return 84;
-    // std::cout << "Hello, World!" << std::endl;
+    //if (argc != 2)
+    //    return 84;
+    //if (errorArg(argv[1]) == 84)
+    //    return 84;
+
     return 0;
 }

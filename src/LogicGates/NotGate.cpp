@@ -5,4 +5,3 @@
 ** Description
 */
 
-#include "AndGate.hpp"
