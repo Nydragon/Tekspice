@@ -1,0 +1,15 @@
+/*
+** EPITECH PROJECT, 2022
+** Project
+** File description:
+** Description
+*/
+
+#ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ANDGATE_HPP
+#define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ANDGATE_HPP
+
+class and_gate
+{
+};
+
+#endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ANDGATE_HPP
