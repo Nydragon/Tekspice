@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <deque>
 #include <unordered_map>
 #include "IComponent.hpp"
 #include "ILogicGate.hpp"
@@ -18,11 +19,11 @@ namespace nts
 {
     class GenericComponent : public virtual IComponent
     {
-        std::string name;
+        std::string _name;
 
-        std::vector<ILogicGate> circuitry;
+        std::vector<ILogicGate *> circuitry;
 
-        std::vector<std::vector<std::size_t>> pins;
+        std::vector<std::deque<std::size_t>> pins;
         //  [Output Pin, Input Pin 1, Input Pin 2]
         //  For 4081 Four And Gate:
         //  [
@@ -45,7 +46,9 @@ namespace nts
 
         void dump() const override;
 
-        static ILogicGate fetchGate(const std::string &name);
+        static ILogicGate *fetchGate(const std::string &type, const std::string &name);
+
+        int findGateIndex(const std::string &name);
     };
 }
 

@@ -10,6 +10,7 @@ LOCATION = src
 FILES = $(LOCATION)/main.cpp\
 		$(LOCATION)/GenericComponent.cpp\
 		$(LOCATION)/NanoTekSpiceError.cpp\
+		$(LOCATION)/LogicGates/AndGate.cpp
 
 SRC =  $(FILES)
 
