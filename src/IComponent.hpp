@@ -12,6 +12,9 @@
 
 namespace nts
 {
+
+    static std::string componentCfgLocation = "src/resources/";
+
     enum Tristate
     {
         UNDEFINED = (-true),

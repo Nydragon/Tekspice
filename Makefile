@@ -7,7 +7,9 @@
 
 LOCATION = src
 
-FILES = $(LOCATION)/main.c
+FILES = $(LOCATION)/main.cpp\
+		$(LOCATION)/GenericComponent.cpp\
+		$(LOCATION)/NanoTekSpiceError.cpp\
 
 SRC =  $(FILES)
 
