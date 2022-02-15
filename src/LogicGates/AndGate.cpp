@@ -10,7 +10,7 @@
 nts::Tristate nts::AndGate::getInput1() {
     return this->_input1;
 }
-
+    
 nts::Tristate nts::AndGate::getInput2() {
     return this->_input2;
 }
@@ -33,7 +33,7 @@ void nts::AndGate::setOutput(nts::Tristate Value) {
 
 nts::Tristate nts::AndGate::compute()
 {
-    if (getInput1() == TRUE && getInput1() == TRUE)
+    if (getInput1() == TRUE && getInput2() == TRUE)
         setOutput(nts::Tristate::TRUE);
     else
         setOutput(nts::Tristate::FALSE);
