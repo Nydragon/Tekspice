@@ -16,7 +16,6 @@ namespace nts
     {
     public:
         virtual ~ILogicGate() = default;
-
         virtual nts::Tristate compute() = 0;
     };
 }
