@@ -25,3 +25,8 @@ std::string const &nts::NanoTekSpiceError::getComponent() const
 nts::FileNotFound::FileNotFound(const std::string &path) : NanoTekSpiceError("File: " + path + " not found.")
 {
 }
+
+nts::InvalidLink::InvalidLink(const std::string &type, const std::string &line)
+    : NanoTekSpiceError("Right hand side of link for component \"" + type + "\" has to refer to self, here: \"" + line + "\"")
+{
+}

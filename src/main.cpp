@@ -8,7 +8,9 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <memory>
 #include "GenericComponent.hpp"
+#include <time.h>
 
 int errorArg(std::string arg)
 {
@@ -26,6 +28,11 @@ int errorArg(std::string arg)
     return 0;
 }
 
+std::unique_ptr<nts::IComponent> createComponent(const std::string &type)
+{
+    return std::unique_ptr<nts::IComponent>(new nts::GenericComponent("4081", std::to_string(random() % 100000)));
+};
+
 //int main(int argc, char *argv[])
 //{
 //    if (argc != 2)
@@ -36,11 +43,21 @@ int errorArg(std::string arg)
 //    return 0;
 //}
 
-int main(int argc, char *argv[])
+int main()
 {
+    srandom(time(0));
 
     try {
-        auto comp = new nts::GenericComponent("4081", "and");
+        auto and1 = createComponent("4081");
+
+        auto and2 = createComponent("4081");
+
+        and1->dump();
+
+        and1->setLink(1, *and2, 3);
+
+        and1->dump();
+        and2->dump();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }

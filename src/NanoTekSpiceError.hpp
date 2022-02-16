@@ -32,6 +32,13 @@ namespace nts
     public:
         FileNotFound(std::string const &path);
     };
+
+    class InvalidLink : public NanoTekSpiceError
+    {
+    public:
+        InvalidLink(const std::string &type, const std::string &line);
+    };
+
 }
 
 

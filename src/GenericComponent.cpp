@@ -8,10 +8,12 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <iomanip>
 #include "GenericComponent.hpp"
 #include "NanoTekSpiceError.hpp"
 #include "LogicGates/AndGate.hpp"
 
+#define KOWALSKI std::cout << "Kowalski, analysis." << std::endl;
 #define C_ALL(a) cbegin(a), cend(a)
 
 nts::GenericComponent::GenericComponent(const std::string &type, const std::string &name)
@@ -19,6 +21,7 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
 
     std::ifstream input_file(nts::componentCfgLocation + type + ".cfg");
     this->_name = name;
+    this->_type = type;
 
     if (!input_file.is_open())
         throw nts::FileNotFound(nts::componentCfgLocation + type + ".cfg");
@@ -29,16 +32,22 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
 
     while (std::getline(input_file, line)) {
         line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
-
         if (line[0] == '.') {
-            if (line == ".circuitry")
+            if (line == ".pins") {
+                std::getline(input_file, line);
+                this->_pin_no = std::stoi(line);
+                this->pins.resize(this->_pin_no);
+                for (size_t i = 0; i < this->_pin_no; i++)
+                    this->pins[i] = {.number =  i + 1};
+            } else if (line == ".circuitry") {
                 section = 1;
-            if (line == ".links")
+            } else if (line == ".links")
                 section = 2;
             continue;
         }
 
-        char *token = std::strtok(const_cast<char *>(line.c_str()), " ");
+        char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
+
         std::string left, right;
 
         if (token)
@@ -51,25 +60,26 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
         }
 
         if (section == 2 && left != "null") {
-            const auto nameReg = std::regex(R"(.*?(?=:))");
-            std::string compName = std::regex_token_iterator(C_ALL(left), nameReg, 0)->str();
-            int gateIndex = findGateIndex(compName);
+            const auto beforeCol = std::regex(".+(?=:)");
+            const auto afterCol = std::regex(":.+");
+            std::string compNameLeft = std::regex_token_iterator(C_ALL(left), beforeCol, 0)->str();
+            std::string compNameRight = std::regex_token_iterator(C_ALL(right), beforeCol, 0)->str();
+            /**
+             * I need to exclude the colon from the match but
+             * \K and lookbehind do not work in c++ regex flavour
+             * therefore I skip the first character of the match
+             */
+            size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
+            size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
+            int gateIndex = findGateIndex(compNameLeft);
 
-            if (this->pins.size() <= gateIndex)
-                this->pins.resize(gateIndex + 1, std::deque<size_t>(0));
-            if (this->pins.at(gateIndex)[0] < left[-1] - 48)
-                this->pins.at(gateIndex).push_front(std::stoi(right));
-            else
-                this->pins.at(gateIndex).push_back(std::stoi(right));
-            sort(this->pins[gateIndex].begin() + 1, this->pins[gateIndex].end());
+            if (compNameRight != "self")
+                throw nts::InvalidLink(this->getType(), line);
+            int pin_i = findPinIndex(pinNumRight);
+            this->pins[pin_i].number = this->pins[pin_i].number ? this->pins[pin_i].number : pinNumRight;
+            this->pins[pin_i].inner_connection.pin = pinNumLeft;
+            this->pins[pin_i].inner_connection.gate_r = this->circuitry[gateIndex];
         }
-    }
-
-    for (auto &pin: this->pins) {
-        for (auto &n: pin) {
-            std::cout << n << " ";
-        }
-        std::cout << std::endl;
     }
 }
 
@@ -84,10 +94,40 @@ nts::Tristate nts::GenericComponent::compute(std::size_t pin)
 
 void nts::GenericComponent::setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin)
 {
+    size_t index = this->findPinIndex(pin);
+
+    if (this->pins[index].outer_connection.comp_r == &other && this->pins[index].outer_connection.pin == otherPin)
+        return;
+    this->pins[index].outer_connection.comp_r = &other;
+    this->pins[index].outer_connection.pin = otherPin;
+    other.setLink(otherPin, static_cast<IComponent &>(*this), pin);
 }
 
 void nts::GenericComponent::dump() const
 {
+    int col_w = 15;
+
+    std::cout << "Component " << this->getType() << " \"" << this->getName() << "\"" << std::endl;
+    std::cout << std::setw(col_w) << "Pin No."
+              << std::setw(col_w) << "outer con"
+              << std::setw(col_w) << "outer con Pin"
+              << std::setw(col_w) << "inner con"
+              << std::setw(col_w) << "inner con Pin"
+              << std::setw(col_w) << "state" << std::endl;
+    for (auto &pin: this->pins) {
+        std::cout << std::setw(col_w) << pin.number
+                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
+            .outer_connection.comp_r)->getName() : "N/A")
+                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
+                  /**
+                   * replace with GenericGate
+                   */
+                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
+            .inner_connection.gate_r)->getName() : "N/A")
+                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
+                  << std::setw(col_w) << pin.state
+                  << std::endl;
+    }
 }
 
 nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const std::string &name)
@@ -98,12 +138,35 @@ nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const
         throw nts::NanoTekSpiceError("Gate: \"" + name + "\" not found");
 }
 
-int nts::GenericComponent::findGateIndex(const std::string &name)
+int nts::GenericComponent::findGateIndex(const std::string &name) const
 {
     int i = 0;
 
     for (auto &gate: this->circuitry) {
         if (gate && gate->getName() == name)
+            return i;
+        i++;
+    }
+    return -1;
+}
+
+std::string nts::GenericComponent::getName() const
+{
+    return this->_name;
+}
+
+std::string nts::GenericComponent::getType() const
+{
+    return this->_type;
+}
+
+int nts::GenericComponent::findPinIndex(size_t pin) const
+{
+
+    int i = 0;
+
+    for (auto &pin_s: this->pins) {
+        if (pin_s.number == pin)
             return i;
         i++;
     }

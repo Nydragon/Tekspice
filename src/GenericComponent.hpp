@@ -17,23 +17,41 @@
 
 namespace nts
 {
+    typedef struct
+    {
+        size_t pin = 0;
+        IComponent *comp_r = nullptr;
+    } componentConnection;
+
+    typedef struct
+    {
+        size_t pin = 0;
+        ILogicGate *gate_r = nullptr;
+    } logicGateConnection;
+
+    typedef struct
+    {
+        size_t number = 0;
+        nts::Tristate state = nts::Tristate::UNDEFINED;
+        componentConnection outer_connection = componentConnection();
+        logicGateConnection inner_connection = logicGateConnection();
+    } pin_t;
+
     class GenericComponent : public virtual IComponent
     {
         std::string _name;
 
+        std::string _type;
+
+        size_t _pin_no;
+
         std::vector<ILogicGate *> circuitry;
 
-        std::vector<std::deque<std::size_t>> pins;
-        //  [Output Pin, Input Pin 1, Input Pin 2]
-        //  For 4081 Four And Gate:
-        //  [
-        //      [3, 1, 2]
-        //      [4, 5, 6]
-        //      [10, 8, 9]
-        //      [11, 12, 13]
-        //  ]
+
 
     public:
+        std::vector<pin_t> pins;
+
         GenericComponent(const std::string &type, const std::string &name);
 
         ~GenericComponent() = default;
@@ -48,7 +66,13 @@ namespace nts
 
         static ILogicGate *fetchGate(const std::string &type, const std::string &name);
 
-        int findGateIndex(const std::string &name);
+        int findGateIndex(const std::string &name) const;
+
+        int findPinIndex(size_t pin) const;
+
+        std::string getName() const;
+
+        std::string getType() const;
     };
 }
 
