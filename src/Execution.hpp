@@ -9,6 +9,10 @@
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_EXECUTION_HPP
 
 #include <string>
+#include <iostream>
+#include <map>
+#include <regex>
+
 
 class Execution {
     public:
@@ -16,8 +20,18 @@ class Execution {
         ~Execution(){};
         std::string getValue();
         void setValue(std::string NewValue);
+        void run();
+        // function dispo
+        void display();
+        void input();
+        void simulate();
+        void loop();
+        void dump();
+        //functin else
+        void nobody();
     private:
         std::string _value;
+
 };
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_EXECUTION_HPP
