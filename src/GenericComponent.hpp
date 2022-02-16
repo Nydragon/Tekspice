@@ -47,8 +47,6 @@ namespace nts
 
         std::vector<ILogicGate *> circuitry;
 
-
-
     public:
         std::vector<pin_t> pins;
 

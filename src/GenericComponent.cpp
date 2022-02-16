@@ -122,7 +122,7 @@ void nts::GenericComponent::dump() const
                   /**
                    * replace with GenericGate
                    */
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
+                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? reinterpret_cast<GenericGate *>(pin
             .inner_connection.gate_r)->getName() : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
                   << std::setw(col_w) << pin.state
