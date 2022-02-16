@@ -5,18 +5,18 @@
 ** Description
 */
 
-#ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTGATE_HPP
-#define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTGATE_HPP
+#ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTNOTGATE_HPP
+#define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTNOTGATE_HPP
 #include "../IComponent.hpp"
 #include "../ILogicGate.hpp"
 #include <string>
 
 namespace nts {
-    class NotGate: virtual public ILogicGate
+    class NotNotGate: virtual public ILogicGate
     {
         public:
-            NotGate(std::string name);
-            ~NotGate() = default;
+            NotNotGate(std::string name);
+            ~NotNotGate() = default;
             nts::Tristate compute();
             nts::Tristate getInput1();
             nts::Tristate getOutput();
@@ -30,4 +30,4 @@ namespace nts {
     };
 };
 
-#endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTGATE_HPP
+#endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTNOTGATE_HPP

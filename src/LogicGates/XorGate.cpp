@@ -7,29 +7,7 @@
 
 #include "XorGate.hpp"
 
-nts::Tristate nts::XorGate::getInput1() {
-    return this->_input1;
-}
-    
-nts::Tristate nts::XorGate::getInput2() {
-    return this->_input2;
-}
-
-nts::Tristate nts::XorGate::getOutput() {
-    return _output;
-}
-
-void nts::XorGate::setInput1(nts::Tristate Value) {
-    this->_input1 = Value;
-}
-
-void nts::XorGate::setInput2(nts::Tristate Value) {
-    this->_input2 = Value;
-}
-
-void nts::XorGate::setOutput(nts::Tristate Value) {
-    this->_output = Value;
-}
+nts::XorGate::XorGate(std::string name) : GenericGate(name) {}
 
 nts::Tristate nts::XorGate::compute()
 {
