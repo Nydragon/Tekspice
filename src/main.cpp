@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include "GenericComponent.hpp"
 
 int errorArg(std::string arg)
 {
@@ -25,12 +26,26 @@ int errorArg(std::string arg)
     return 0;
 }
 
+//int main(int argc, char *argv[])
+//{
+//    if (argc != 2)
+//        return 84;
+//    if (errorArg(argv[1]) == 84)
+//        return 84;
+//    // std::cout << "Hello, World!" << std::endl;
+//    return 0;
+//}
+
 int main(int argc, char *argv[])
 {
-    //if (argc != 2)
-    //    return 84;
-    //if (errorArg(argv[1]) == 84)
-    //    return 84;
+
+    try {
+        auto comp = new nts::GenericComponent("4081", "and");
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+    }
+
+    std::cout << "test";
 
     return 0;
 }

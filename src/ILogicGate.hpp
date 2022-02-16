@@ -16,7 +16,10 @@ namespace nts
     {
     public:
         virtual ~ILogicGate() = default;
+
         virtual nts::Tristate compute() = 0;
+
+        virtual std::string getName() = 0;
     };
 }
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ILOGICGATE_HPP

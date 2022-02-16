@@ -5,6 +5,6 @@ output  o$
 .links:$
 a:1     o:1$
 ~/B-OOP-400> ./nanotekspice bad.nts
-Unknow component name 'a'.
+Unknow component _name 'a'.
 ~/B-OOP-400> echo $?
 84
