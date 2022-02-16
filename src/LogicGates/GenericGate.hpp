@@ -25,7 +25,7 @@ namespace nts {
             void setOutput(nts::Tristate);
             std::string getName();
         private:
-            std::string name;
+            std::string _name;
             nts::Tristate _input1 = nts::Tristate::UNDEFINED;
             nts::Tristate _input2 = nts::Tristate::UNDEFINED;
             nts::Tristate _output = nts::Tristate::UNDEFINED;

@@ -18,7 +18,3 @@ nts::Tristate nts::AndGate::compute()
     return getOutput();
 }
 
-std::string nts::AndGate::getName()
-{
-    return this->_name;
-}

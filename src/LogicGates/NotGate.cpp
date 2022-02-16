@@ -7,12 +7,20 @@
 
 #include "NotGate.hpp"
 
+nts::NotGate::NotGate(std::string name) {
+    this->_name = name;
+}
+
+std::string nts::NotGate::getName() {
+    return this->_name;
+}
+
 nts::Tristate nts::NotGate::getInput1() {
     return this->_input1;
 }
 
 nts::Tristate nts::NotGate::getOutput() {
-    return _output;
+    return this->_output;
 }
 
 void nts::NotGate::setInput1(nts::Tristate Value) {
