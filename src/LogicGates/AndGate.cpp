@@ -7,29 +7,7 @@
 
 #include "AndGate.hpp"
 
-nts::Tristate nts::AndGate::getInput1() {
-    return this->_input1;
-}
-    
-nts::Tristate nts::AndGate::getInput2() {
-    return this->_input2;
-}
-
-nts::Tristate nts::AndGate::getOutput() {
-    return _output;
-}
-
-void nts::AndGate::setInput1(nts::Tristate Value) {
-    this->_input1 = Value;
-}
-
-void nts::AndGate::setInput2(nts::Tristate Value) {
-    this->_input2 = Value;
-}
-
-void nts::AndGate::setOutput(nts::Tristate Value) {
-    this->_output = Value;
-}
+nts::AndGate::AndGate (std::string name) : GenericGate(name) {}
 
 nts::Tristate nts::AndGate::compute()
 {

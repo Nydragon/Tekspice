@@ -5,17 +5,17 @@
 ** Description
 */
 
-#include "XorGate.hpp"
+#include "XnorGate.hpp"
 
-nts::XorGate::XorGate(std::string name) : GenericGate(name) {}
+nts::XnorGate::XnorGate(std::string name) : GenericGate(name) {}
 
-nts::Tristate nts::XorGate::compute()
+nts::Tristate nts::XnorGate::compute()
 {
     if (getInput1() == TRUE && getInput2() == TRUE)
-        setOutput(nts::Tristate::FALSE);
-    else if (getInput1() == FALSE && getInput2() == FALSE)
-        setOutput(nts::Tristate::FALSE);
-    else
         setOutput(nts::Tristate::TRUE);
+    else if (getInput1() == FALSE && getInput2() == FALSE)
+        setOutput(nts::Tristate::TRUE);
+    else
+        setOutput(nts::Tristate::FALSE);
     return getOutput();
 }
