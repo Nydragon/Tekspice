@@ -9,6 +9,7 @@
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ICOMPONENT_HPP
 
 #include <cstddef>
+#include <string>
 
 namespace nts
 {

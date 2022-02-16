@@ -56,8 +56,18 @@ int main()
 
         and1->setLink(1, *and2, 3);
 
-        and1->dump();
-        and2->dump();
+        auto comp = new nts::GenericComponent("4081", "and");
+
+        comp->pins[0].state = nts::Tristate::TRUE;
+        comp->pins[1].state = nts::Tristate::TRUE;
+
+        comp->simulate(1);
+
+
+        comp->dump();
+
+        //        and1->dump();
+        //        and2->dump();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }

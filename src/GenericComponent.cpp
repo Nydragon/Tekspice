@@ -13,9 +13,6 @@
 #include "NanoTekSpiceError.hpp"
 #include "LogicGates/AndGate.hpp"
 
-#define KOWALSKI std::cout << "Kowalski, analysis." << std::endl;
-#define C_ALL(a) cbegin(a), cend(a)
-
 nts::GenericComponent::GenericComponent(const std::string &type, const std::string &name)
 {
 
@@ -72,24 +69,38 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
             size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
             size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
             int gateIndex = findGateIndex(compNameLeft);
-
-            if (compNameRight != "self")
-                throw nts::InvalidLink(this->getType(), line);
             int pin_i = findPinIndex(pinNumRight);
-            this->pins[pin_i].number = this->pins[pin_i].number ? this->pins[pin_i].number : pinNumRight;
-            this->pins[pin_i].inner_connection.pin = pinNumLeft;
-            this->pins[pin_i].inner_connection.gate_r = this->circuitry[gateIndex];
+
+            if (compNameRight != "self") {
+                int otherGateIndex = findGateIndex(compNameRight);
+
+                this->circuitry[gateIndex]->setLink(pinNumLeft, *this->circuitry[otherGateIndex], pinNumRight);
+            } else {
+
+                this->pins[pin_i].number = this->pins[pin_i].number ? this->pins[pin_i].number : pinNumRight;
+                this->pins[pin_i].inner_connection.pin = pinNumLeft;
+                this->pins[pin_i].inner_connection.gate_r = this->circuitry[gateIndex];
+                this->circuitry[gateIndex]->setLink(pinNumLeft, *this, pinNumRight);
+            }
         }
     }
 }
 
 void nts::GenericComponent::simulate(std::size_t tick)
 {
+    for (auto &pin_l: this->pins) {
+        if (pin_l.inner_connection.gate_r != nullptr)
+            pin_l.inner_connection.gate_r->setPin(pin_l.inner_connection.pin, pin_l.state);
+    }
+
+    for (auto &gate: this->circuitry) {
+        gate->compute();
+    }
 }
 
 nts::Tristate nts::GenericComponent::compute(std::size_t pin)
 {
-    return nts::FALSE;
+    return this->pins[this->findPinIndex(pin)].inner_connection.gate_r->compute();
 }
 
 void nts::GenericComponent::setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin)
@@ -119,15 +130,14 @@ void nts::GenericComponent::dump() const
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
             .outer_connection.comp_r)->getName() : "N/A")
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
-                  /**
-                   * replace with GenericGate
-                   */
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? reinterpret_cast<GenericGate *>(pin
             .inner_connection.gate_r)->getName() : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
                   << std::setw(col_w) << pin.state
                   << std::endl;
     }
+
+    this->circuitry[0]->dump();
 }
 
 nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const std::string &name)
@@ -162,7 +172,6 @@ std::string nts::GenericComponent::getType() const
 
 int nts::GenericComponent::findPinIndex(size_t pin) const
 {
-
     int i = 0;
 
     for (auto &pin_s: this->pins) {

@@ -5,9 +5,12 @@
 ** Description
 */
 
+#include <iostream>
 #include "AndGate.hpp"
 
-nts::AndGate::AndGate (std::string name) : GenericGate(name) {}
+nts::AndGate::AndGate(std::string name) : GenericGate(name)
+{
+}
 
 nts::Tristate nts::AndGate::compute()
 {
@@ -17,4 +20,3 @@ nts::Tristate nts::AndGate::compute()
         setOutput(nts::Tristate::FALSE);
     return getOutput();
 }
-
