@@ -11,7 +11,7 @@
 #include <iomanip>
 #include "GenericComponent.hpp"
 #include "NanoTekSpiceError.hpp"
-#include "LogicGates/AndGate.hpp"
+#include "LogicGates/Gates.hpp"
 
 nts::GenericComponent::GenericComponent(const std::string &type, const std::string &name)
 {
@@ -93,8 +93,33 @@ void nts::GenericComponent::simulate(std::size_t tick)
             pin_l.inner_connection.gate_r->setPin(pin_l.inner_connection.pin, pin_l.state);
     }
 
-    for (auto &gate: this->circuitry) {
-        gate->compute();
+    int calculated = 0;
+
+    while (!calculated) {
+        calculated = 1;
+        for (auto &gate: this->circuitry) {
+            std::vector<nts::pin_t> gatePins = gate->getPins();
+
+            if ((gatePins.size() == 3 && gatePins[2].state != nts::Tristate::UNDEFINED) ||
+                (gatePins.size() == 2 && gatePins[1].state != nts::Tristate::UNDEFINED)) {
+                continue;
+            }
+            if (gatePins.size() == 3 &&
+                (((gatePins[0].state == nts::Tristate::UNDEFINED && gatePins[0].inner_connection.pin > 0) ||
+                  (gatePins[1].state == nts::Tristate::UNDEFINED && gatePins[1].inner_connection.pin > 0)))) {
+                calculated = 0;
+                continue;
+            }
+
+            nts::Tristate newState = gate->compute();
+
+            if (gate->outputPin().outer_connection.pin > 0) {
+                this->pins[this->findPinIndex(gate->outputPin().outer_connection.pin)].state = newState;
+            } else if (gate->outputPin().inner_connection.pin > 0) {
+                gate->outputPin().inner_connection.gate_r->setPin(gate->outputPin().inner_connection.pin, newState);
+            }
+            calculated = 0;
+        }
     }
 }
 
@@ -130,20 +155,31 @@ void nts::GenericComponent::dump() const
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
             .outer_connection.comp_r)->getName() : "N/A")
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? reinterpret_cast<GenericGate *>(pin
-            .inner_connection.gate_r)->getName() : "N/A")
+                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? pin.inner_connection.gate_r->getName() : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
                   << std::setw(col_w) << pin.state
                   << std::endl;
     }
 
-    this->circuitry[0]->dump();
+    for (auto &gate: this->circuitry) {
+        gate->dump();
+    }
 }
 
 nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const std::string &name)
 {
     if ("and" == type)
         return new AndGate(name);
+    else if ("nand" == type)
+        return new NandGate(name);
+    else if ("or" == type)
+        return new OrGate(name);
+    else if ("xor" == type)
+        return new XorGate(name);
+    else if ("nor" == type)
+        return new NorGate(name);
+    else if ("xnor" == type)
+        return new XnorGate(name);
     else
         throw nts::NanoTekSpiceError("Gate: \"" + name + "\" not found");
 }

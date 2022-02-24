@@ -7,13 +7,15 @@
 
 #include "OrGate.hpp"
 
-nts::OrGate::OrGate(std::string name) : GenericGate(name) {}
+nts::OrGate::OrGate(std::string name) : GenericGate(name)
+{
+}
 
 nts::Tristate nts::OrGate::compute()
 {
-    if (getInput1() == FALSE && getInput2() == FALSE)
-        setOutput(nts::Tristate::FALSE);
-    else
+    if (getInput1() == TRUE || getInput2() == TRUE)
         setOutput(nts::Tristate::TRUE);
+    else
+        setOutput(nts::Tristate::FALSE);
     return getOutput();
 }

@@ -9,7 +9,9 @@
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ILOGICGATE_HPP
 
 #include <string>
+#include <vector>
 #include "IComponent.hpp"
+#include "types.hpp"
 
 namespace nts
 {
@@ -43,6 +45,11 @@ namespace nts
         virtual void setOutput(nts::Tristate) = 0;
 
         virtual void setPin(size_t pin, nts::Tristate state) = 0;
+
+        virtual pin_t &outputPin() = 0;
+
+        virtual std::vector<pin_t>getPins() = 0;
+
     };
 }
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ILOGICGATE_HPP
