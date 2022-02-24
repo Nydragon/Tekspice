@@ -8,6 +8,7 @@
 #include <fstream>
 #include "Execution.hpp"
 #include "NanoTekSpiceError.hpp"
+#include "types.hpp"
 
 Execution::Execution(const std::string &filename)
 {
@@ -102,13 +103,25 @@ void Execution::run()
 void Execution::loadFile(const std::string &filename)
 {
     std::ifstream input_file(filename);
-    std::string filecontent;
 
     if (!input_file.is_open())
         throw nts::FileNotFound(filename);
 
-    filecontent = std::string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
-    std::cout << filecontent;
+    std::string line;
+    const auto r = std::regex(R"(.*?(?=(#|$)))");
+    int section = 99;
+
+    while (std::getline(input_file, line)) {
+        line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
+        if (line[0] == '.') {
+            if (line == ".circuitry") {
+                section = 1;
+            } else if (line == ".links")
+                section = 2;
+            continue;
+        }
+        std::cout << section << std::endl;
+    }
 }
 
 //int main() {
