@@ -12,11 +12,11 @@
 #include <iostream>
 #include <map>
 #include <regex>
-
+#include "IComponent.hpp"
 
 class Execution {
     public:
-        Execution();
+        Execution(const std::string &filename);
         ~Execution(){};
         std::string getValue();
         void setValue(std::string NewValue);
@@ -27,11 +27,12 @@ class Execution {
         void simulate();
         void loop();
         void dump();
-        //functin else
+        //function else
         void nobody();
+        void loadFile(const std::string& filename);
     private:
         std::string _value;
-
+        std::deque<nts::IComponent *> circuitry;
 };
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_EXECUTION_HPP

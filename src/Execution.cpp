@@ -5,44 +5,57 @@
 ** Description
 */
 
+#include <fstream>
 #include "Execution.hpp"
+#include "NanoTekSpiceError.hpp"
 
-Execution::Execution() {}
+Execution::Execution(const std::string &filename)
+{
+    this->loadFile(filename);
+}
 
-std::string Execution::getValue() {
+std::string Execution::getValue()
+{
     return this->_value;
 }
 
-void Execution::display() {
+void Execution::display()
+{
     std::cout << "display g" << std::endl;
 }
 
-void Execution::input() {
+void Execution::input()
+{
     std::cout << "input g" << std::endl;
 }
 
-void Execution::simulate() {
+void Execution::simulate()
+{
     std::cout << "simulate g" << std::endl;
 }
 
-void Execution::loop() {
-    std::cout << "loop g" << std::endl;   
+void Execution::loop()
+{
+    std::cout << "loop g" << std::endl;
 }
 
-void Execution::dump() {
+void Execution::dump()
+{
     std::cout << "dump g" << std::endl;
 }
 
-void Execution::nobody() {
-    
+void Execution::nobody()
+{
+
     std::cout << "nobody g" << std::endl;
 }
 
-void Execution::run() {
-    
+void Execution::run()
+{
+
     std::regex a("[[:alpha:]0-9]*=[01]");
     std::smatch match;
-    
+
     while (true) {
         std::cout << "> ";
         getline(std::cin, this->_value);
@@ -62,6 +75,18 @@ void Execution::run() {
         else
             nobody();
     }
+}
+
+void Execution::loadFile(const std::string &filename)
+{
+    std::ifstream input_file(filename);
+    std::string filecontent;
+
+    if (!input_file.is_open())
+        throw nts::FileNotFound(filename);
+
+    filecontent = std::string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+    std::cout << filecontent;
 }
 
 //int main() {
