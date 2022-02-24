@@ -5,15 +5,22 @@
 ** Description
 */
 
+#include <fstream>
 #include "Execution.hpp"
+#include "NanoTekSpiceError.hpp"
 
-Execution::Execution() {}
+Execution::Execution(const std::string &filename)
+{
+    this->loadFile(filename);
+}
 
-std::string Execution::getValue() {
+std::string Execution::getValue()
+{
     return this->_value;
 }
 
-void Execution::display() {
+void Execution::display()
+{
     int a = 1;
     std::cout << "tick: " << a << std::endl;
     std::cout << "input(s):" << std::endl;
@@ -22,13 +29,14 @@ void Execution::display() {
     std::cout << "output(s):\n  s: 0" << std::endl;
 }
 
-void Execution::input(std::string value) {
+void Execution::input(std::string value)
+{
     std::regex a("[a-zA-Z][a-zA-Z0-9]*");
     std::regex b("-?[01]");
 
     std::smatch match;
     const std::string gValue = value;
-    
+
     std::string buffString = "default";
     nts::Tristate buffValue = nts::Tristate::FALSE;
     if (std::regex_search(gValue.begin(), gValue.end(), match, a) == 1)
@@ -45,28 +53,33 @@ void Execution::input(std::string value) {
     this->_inputs[buffString] = buffValue;
 }
 
-void Execution::simulate() {
+void Execution::simulate()
+{
     std::cout << "simulate g" << std::endl;
 }
 
-void Execution::loop() {
-    std::cout << "loop g" << std::endl;   
+void Execution::loop()
+{
+    std::cout << "loop g" << std::endl;
 }
 
-void Execution::dump() {
+void Execution::dump()
+{
     std::cout << "dump g" << std::endl;
 }
 
-void Execution::nobody() {
-    
+void Execution::nobody()
+{
+
     std::cout << "nobody g" << std::endl;
 }
 
-void Execution::run() {
-    
+void Execution::run()
+{
+
     std::regex a("[[:alpha:]0-9]*=-?[01]");
     std::smatch match;
-    
+
     while (true) {
         std::cout << "> ";
         getline(std::cin, this->_value);
@@ -86,6 +99,18 @@ void Execution::run() {
         else
             nobody();
     }
+}
+
+void Execution::loadFile(const std::string &filename)
+{
+    std::ifstream input_file(filename);
+    std::string filecontent;
+
+    if (!input_file.is_open())
+        throw nts::FileNotFound(filename);
+
+    filecontent = std::string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+    std::cout << filecontent;
 }
 
 //int main() {
