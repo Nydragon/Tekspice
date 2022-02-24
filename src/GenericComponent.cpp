@@ -11,7 +11,7 @@
 #include <iomanip>
 #include "GenericComponent.hpp"
 #include "NanoTekSpiceError.hpp"
-#include "LogicGates/AndGate.hpp"
+#include "LogicGates/Gates.hpp"
 
 nts::GenericComponent::GenericComponent(const std::string &type, const std::string &name)
 {
@@ -94,7 +94,9 @@ void nts::GenericComponent::simulate(std::size_t tick)
     }
 
     for (auto &gate: this->circuitry) {
-        gate->compute();
+        auto downcastedGate = reinterpret_cast<GenericGate *>(gate);
+        std::cout << downcastedGate->outputPin().outer_connection.pin << std::endl;
+        this->pins[this->findPinIndex(downcastedGate->outputPin().outer_connection.pin)].state = gate->compute();
     }
 }
 
@@ -144,6 +146,16 @@ nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const
 {
     if ("and" == type)
         return new AndGate(name);
+    else if ("nand" == type)
+        return new NandGate(name);
+    else if ("or" == type)
+        return new OrGate(name);
+    else if ("xor" == type)
+        return new XorGate(name);
+    else if ("nor" == type)
+        return new NorGate(name);
+    else if ("xnor" == type)
+        return new XnorGate(name);
     else
         throw nts::NanoTekSpiceError("Gate: \"" + name + "\" not found");
 }

@@ -120,5 +120,9 @@ void nts::GenericGate::setPin(size_t pin, nts::Tristate state)
             pin_s.state = state;
         }
     }
-    std::cout << "error" << std::endl;
+}
+
+nts::pin_t &nts::GenericGate::outputPin()
+{
+    return this->pins[2];
 }

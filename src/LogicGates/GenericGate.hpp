@@ -7,11 +7,11 @@
 
 #ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENGATE_HPP
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENGATE_HPP
+
 #include "../IComponent.hpp"
 #include "../ILogicGate.hpp"
 #include "../GenericComponent.hpp"
 #include <string>
-#include "../types.hpp"
 
 namespace nts {
     class GenericGate: virtual public ILogicGate
@@ -31,7 +31,8 @@ namespace nts {
             void setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin) override;
             void dump();
             void setPin(size_t pin, nts::Tristate state) override;
-        protected:
+            pin_t &outputPin();
+    protected:
             std::vector<nts::pin_t> pins;
             std::string _name;
     };
