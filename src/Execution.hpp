@@ -12,8 +12,8 @@
 #include <iostream>
 #include <map>
 #include <regex>
-
-
+#include <unordered_map>
+#include "IComponent.hpp"
 class Execution {
     public:
         Execution();
@@ -23,7 +23,7 @@ class Execution {
         void run();
         // function dispo
         void display();
-        void input();
+        void input(std::string);
         void simulate();
         void loop();
         void dump();
@@ -31,6 +31,7 @@ class Execution {
         void nobody();
     private:
         std::string _value;
+        std::unordered_map <std::string, nts::Tristate> _inputs;
 
 };
 
