@@ -90,7 +90,7 @@ void nts::GenericGate::dump()
 {
     int col_w = 15;
 
-    std::cout << "Component \"" << this->getName() << "\"" << std::endl;
+    std::cout << "Gate \"" << this->getName() << "\"" << std::endl;
     std::cout << std::setw(col_w) << "Pin No."
               << std::setw(col_w) << "outer con"
               << std::setw(col_w) << "outer con Pin"

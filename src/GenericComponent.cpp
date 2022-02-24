@@ -99,12 +99,25 @@ void nts::GenericComponent::simulate(std::size_t tick)
         calculated = 1;
         for (auto &gate: this->circuitry) {
             std::vector<nts::pin_t> gatePins = gate->getPins();
-            if (gatePins.size() == 3 &&
-               (((gatePins[0].state == nts::Tristate::UNDEFINED && gatePins[0].inner_connection.pin > 0) ||
-                 (gatePins[1].state == nts::Tristate::UNDEFINED && gatePins[1].inner_connection.pin > 0)) ||
-                gatePins[2].state != nts::Tristate::UNDEFINED))
+
+            if ((gatePins.size() == 3 && gatePins[2].state != nts::Tristate::UNDEFINED) ||
+                (gatePins.size() == 2 && gatePins[1].state != nts::Tristate::UNDEFINED)) {
                 continue;
-            this->pins[this->findPinIndex(gate->outputPin().outer_connection.pin)].state = gate->compute();
+            }
+            if (gatePins.size() == 3 &&
+                (((gatePins[0].state == nts::Tristate::UNDEFINED && gatePins[0].inner_connection.pin > 0) ||
+                  (gatePins[1].state == nts::Tristate::UNDEFINED && gatePins[1].inner_connection.pin > 0)))) {
+                calculated = 0;
+                continue;
+            }
+
+            nts::Tristate newState = gate->compute();
+
+            if (gate->outputPin().outer_connection.pin > 0) {
+                this->pins[this->findPinIndex(gate->outputPin().outer_connection.pin)].state = newState;
+            } else if (gate->outputPin().inner_connection.pin > 0) {
+                gate->outputPin().inner_connection.gate_r->setPin(gate->outputPin().inner_connection.pin, newState);
+            }
             calculated = 0;
         }
     }
@@ -142,14 +155,15 @@ void nts::GenericComponent::dump() const
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
             .outer_connection.comp_r)->getName() : "N/A")
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? reinterpret_cast<GenericGate *>(pin
-            .inner_connection.gate_r)->getName() : "N/A")
+                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? pin.inner_connection.gate_r->getName() : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
                   << std::setw(col_w) << pin.state
                   << std::endl;
     }
 
-    this->circuitry[0]->dump();
+    for (auto &gate: this->circuitry) {
+        gate->dump();
+    }
 }
 
 nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const std::string &name)

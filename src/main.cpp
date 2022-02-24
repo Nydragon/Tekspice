@@ -49,40 +49,38 @@ int main()
 
     try {
 
-                auto comp = new nts::GenericComponent("4071", "or");
+        auto comp = new nts::GenericComponent("4002", "or");
 
-                comp->pins[0].state = nts::Tristate::TRUE;
-                comp->pins[1].state = nts::Tristate::FALSE;
+        comp->pins[0].state = nts::Tristate::TRUE;
+        comp->pins[1].state = nts::Tristate::FALSE;
+        comp->pins[2].state = nts::Tristate::UNDEFINED;
 
-                comp->simulate(1);
+        comp->simulate(1);
 
-                comp->dump();
+        comp->dump();
 
 
-        //                auto and1 = createComponent("4081");
+        //        auto and1 = createComponent("4081");
         //
-        //                auto and2 = createComponent("4081");
+        //        auto and2 = createComponent("4081");
         //
-        //                and1->dump();
+        //        and1->dump();
         //
-        //                and1->setLink(1, *and2, 3);
-
-//        auto comp = new nts::GenericComponent("4081", "and");
-//
-//        comp->pins[0].state = nts::Tristate::TRUE;
-//        comp->pins[1].state = nts::Tristate::TRUE;
-//
-//        comp->simulate(1);
-//
-//        comp->dump();
+        //        and1->setLink(1, *and2, 3);
+        //        auto comp = new nts::GenericComponent("4081", "and");
+        //
+        //        comp->pins[0].state = nts::Tristate::TRUE;
+        //        comp->pins[1].state = nts::Tristate::TRUE;
+        //
+        //        comp->simulate(1);
+        //
+        //        comp->dump();
 
         //                and1->dump();
         //                and2->dump();
     } catch (std::exception &e) {
         std::cout << e.what() << std::endl;
     }
-
-    std::cout << "test";
 
     return 0;
 }
