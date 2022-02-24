@@ -24,7 +24,9 @@ void Execution::display()
 {
     int a = 1;
     std::cout << "tick: " << a << std::endl;
-    std::cout << "input(s):\n  a: 1" << std::endl;
+    std::cout << "input(s):" << std::endl;
+    for (auto const &pair: this->_inputs)
+        std::cout << "  " << pair.first << ": " << pair.second << std::endl;
     std::cout << "output(s):\n  s: 0" << std::endl;
 }
 
