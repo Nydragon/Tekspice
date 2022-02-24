@@ -93,10 +93,20 @@ void nts::GenericComponent::simulate(std::size_t tick)
             pin_l.inner_connection.gate_r->setPin(pin_l.inner_connection.pin, pin_l.state);
     }
 
-    for (auto &gate: this->circuitry) {
-        auto downcastedGate = reinterpret_cast<GenericGate *>(gate);
-        std::cout << downcastedGate->outputPin().outer_connection.pin << std::endl;
-        this->pins[this->findPinIndex(downcastedGate->outputPin().outer_connection.pin)].state = gate->compute();
+    int calculated = 0;
+
+    while (!calculated) {
+        calculated = 1;
+        for (auto &gate: this->circuitry) {
+            std::vector<nts::pin_t> gatePins = gate->getPins();
+            if (gatePins.size() == 3 &&
+               (((gatePins[0].state == nts::Tristate::UNDEFINED && gatePins[0].inner_connection.pin > 0) ||
+                 (gatePins[1].state == nts::Tristate::UNDEFINED && gatePins[1].inner_connection.pin > 0)) ||
+                gatePins[2].state != nts::Tristate::UNDEFINED))
+                continue;
+            this->pins[this->findPinIndex(gate->outputPin().outer_connection.pin)].state = gate->compute();
+            calculated = 0;
+        }
     }
 }
 

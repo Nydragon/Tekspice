@@ -11,11 +11,12 @@
 #define C_ALL(a) cbegin(a), cend(a)
 
 #include <cstddef>
-#include "IComponent.hpp"
-#include "ILogicGate.hpp"
 
 namespace nts
 {
+    class ILogicGate;
+    class IComponent;
+
     typedef struct
     {
         size_t pin = 0;

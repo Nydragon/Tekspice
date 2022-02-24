@@ -31,7 +31,8 @@ namespace nts {
             void setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin) override;
             void dump();
             void setPin(size_t pin, nts::Tristate state) override;
-            pin_t &outputPin();
+            pin_t &outputPin() override;
+            std::vector<nts::pin_t> getPins() override;
     protected:
             std::vector<nts::pin_t> pins;
             std::string _name;

@@ -49,14 +49,14 @@ int main()
 
     try {
 
-        //        auto comp = new nts::GenericComponent("4071", "or");
-        //
-        //        comp->pins[0].state = nts::Tristate::TRUE;
-        //        comp->pins[1].state = nts::Tristate::FALSE;
-        //
-        //        comp->simulate(1);
-        //
-        //        comp->dump();
+                auto comp = new nts::GenericComponent("4071", "or");
+
+                comp->pins[0].state = nts::Tristate::TRUE;
+                comp->pins[1].state = nts::Tristate::FALSE;
+
+                comp->simulate(1);
+
+                comp->dump();
 
 
         //                auto and1 = createComponent("4081");
@@ -67,14 +67,14 @@ int main()
         //
         //                and1->setLink(1, *and2, 3);
 
-        auto comp = new nts::GenericComponent("4081", "and");
-
-        comp->pins[0].state = nts::Tristate::TRUE;
-        comp->pins[1].state = nts::Tristate::TRUE;
-
-        comp->simulate(1);
-
-        comp->dump();
+//        auto comp = new nts::GenericComponent("4081", "and");
+//
+//        comp->pins[0].state = nts::Tristate::TRUE;
+//        comp->pins[1].state = nts::Tristate::TRUE;
+//
+//        comp->simulate(1);
+//
+//        comp->dump();
 
         //                and1->dump();
         //                and2->dump();

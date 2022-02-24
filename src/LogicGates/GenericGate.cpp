@@ -70,8 +70,6 @@ void nts::GenericGate::setLink(std::size_t pin, nts::IComponent &other, std::siz
 {
     int i = this->findPinIndex(pin);
 
-    if (this->pins[i].outer_connection.comp_r == &other && this->pins[i].outer_connection.pin == otherPin)
-        return;
     this->pins[i].outer_connection.comp_r = &other;
     this->pins[i].outer_connection.pin = otherPin;
 }
@@ -104,8 +102,7 @@ void nts::GenericGate::dump()
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
             .outer_connection.comp_r)->getName() : "N/A")
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? reinterpret_cast<GenericGate *>(pin
-            .inner_connection.gate_r)->getName() : "N/A")
+                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? pin.inner_connection.gate_r->getName() : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
                   << std::setw(col_w) << pin.state
                   << std::endl;
@@ -125,4 +122,9 @@ void nts::GenericGate::setPin(size_t pin, nts::Tristate state)
 nts::pin_t &nts::GenericGate::outputPin()
 {
     return this->pins[2];
+}
+
+std::vector<nts::pin_t> nts::GenericGate::getPins()
+{
+    return this->pins;
 }
