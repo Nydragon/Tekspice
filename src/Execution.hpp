@@ -31,7 +31,7 @@ public:
     // function dispo
     void display();
 
-    void input(std::string);
+    void input(const std::string &value);
 
     void simulate();
 
@@ -39,10 +39,9 @@ public:
 
     void dump();
 
-    //function else
-    void nobody();
-
     void loadFile(const std::string &filename);
+
+    static int isInputAssignment(const std::string &);
 
 private:
     std::string _value;

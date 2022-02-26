@@ -9,6 +9,7 @@
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_TYPES_HPP
 #define KOWALSKI std::cout << "Kowalski, analysis." << std::endl;
 #define C_ALL(a) cbegin(a), cend(a)
+#define ALL(a) begin(a), end(a)
 
 #include <cstddef>
 

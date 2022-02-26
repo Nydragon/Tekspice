@@ -22,11 +22,17 @@ std::string const &nts::NanoTekSpiceError::getComponent() const
     return this->_component;
 }
 
-nts::FileNotFound::FileNotFound(const std::string &path) : NanoTekSpiceError("File: " + path + " not found.")
+nts::FileNotFound::FileNotFound(const std::string &path)
+    : NanoTekSpiceError("File: " + path + " not found.")
 {
 }
 
 nts::InvalidLink::InvalidLink(const std::string &type, const std::string &line)
     : NanoTekSpiceError("Right hand side of link for component \"" + type + "\" has to refer to self, here: \"" + line + "\"")
+{
+}
+
+nts::SyntaxError::SyntaxError(const std::string &line, int line_no)
+    : NanoTekSpiceError("Line " + std::to_string(line_no) + ": \"" + line + "\" contains a syntax error.")
 {
 }

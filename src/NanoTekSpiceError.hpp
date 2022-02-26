@@ -20,7 +20,7 @@ namespace nts
         std::string _component;
 
     public:
-        NanoTekSpiceError(std::string const &message);
+        explicit NanoTekSpiceError(std::string const &message);
 
         std::string const &getComponent() const;
 
@@ -37,6 +37,12 @@ namespace nts
     {
     public:
         InvalidLink(const std::string &type, const std::string &line);
+    };
+
+    class SyntaxError : public NanoTekSpiceError
+    {
+    public:
+        explicit SyntaxError(const std::string &line, int line_no);
     };
 }
 

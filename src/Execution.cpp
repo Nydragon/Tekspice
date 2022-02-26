@@ -27,28 +27,34 @@ void Execution::display()
     std::cout << "input(s):" << std::endl;
     for (auto const &pair: this->_inputs)
         std::cout << "  " << pair.first << ": " << pair.second << std::endl;
-    std::cout << "output(s):\n  s: 0" << std::endl;
+    std::cout << "output(s):" << std::endl;
+    for (auto const &pair: this->_outputs)
+        std::cout << "  " << pair.first << ": " << pair.second << std::endl;
 }
 
-void Execution::input(std::string value)
+void Execution::input(const std::string &value)
 {
     std::regex a("[a-zA-Z][a-zA-Z0-9]*");
-    std::regex b("-?[01]");
+    std::regex b("-?\\d+");
 
     std::smatch match;
-    const std::string gValue = value;
 
-    std::string buffString = "default";
-    nts::Tristate buffValue = nts::Tristate::FALSE;
-    if (std::regex_search(gValue.begin(), gValue.end(), match, a) == 1)
+    std::string buffString;
+    nts::Tristate buffValue;
+
+    if (std::regex_search(ALL(value), match, a) == 1)
         buffString = match[0];
-    if (std::regex_search(gValue.begin(), gValue.end(), match, b) == 1) {
+    if (buffString.empty() || !this->_inputs.contains(buffString))
+        throw nts::NanoTekSpiceError("Input \"" + buffString + "\" does not exist.");
+    if (std::regex_search(ALL(value), match, b) == 1) {
         if (match[0] == "1")
             buffValue = nts::Tristate::TRUE;
         else if (match[0] == "0")
             buffValue = nts::Tristate::FALSE;
-        else
+        else if (match[0] == "-1")
             buffValue = nts::Tristate::UNDEFINED;
+        else
+            throw nts::NanoTekSpiceError("Left hand of assignment operator should be 1 or 0.");
     }
 
     this->_inputs[buffString] = buffValue;
@@ -69,36 +75,38 @@ void Execution::dump()
     std::cout << "dump g" << std::endl;
 }
 
-void Execution::nobody()
+int Execution::isInputAssignment(const std::string &line)
 {
+    std::regex a("[[:alpha:]][[:alpha:]0-9]*=-?\\d+");
+    std::smatch match;
 
-    std::cout << "nobody g" << std::endl;
+    return std::regex_search(ALL(line), match, a);
 }
 
 void Execution::run()
 {
 
-    std::regex a("[[:alpha:]0-9]*=-?[01]");
-    std::smatch match;
-
     while (true) {
-        std::cout << "> ";
-        getline(std::cin, this->_value);
-        const std::string test = this->_value;
-        if (getValue() == "exit")
-            break;
-        else if (getValue() == "display")
-            display();
-        else if (std::regex_search(test.begin(), test.end(), match, a))
-            input(this->_value);
-        else if (getValue() == "simulate")
-            simulate();
-        else if (getValue() == "loop")
-            loop();
-        else if (getValue() == "dump")
-            dump();
-        else
-            nobody();
+        try {
+            std::cout << "> ";
+            getline(std::cin, this->_value);
+            if (getValue() == "exit")
+                break;
+            else if (getValue() == "display")
+                display();
+            else if (this->isInputAssignment(this->_value))
+                this->input(this->_value);
+            else if (getValue() == "simulate")
+                simulate();
+            else if (getValue() == "loop")
+                loop();
+            else if (getValue() == "dump")
+                dump();
+            else
+                throw nts::NanoTekSpiceError("Invalid Command: \"" + this->_value + "\"");
+        } catch (std::exception &err) {
+            std::cerr << err.what() << std::endl;
+        }
     }
 }
 
@@ -113,7 +121,10 @@ void Execution::loadFile(const std::string &filename)
     const auto r = std::regex(R"(.*?(?=(#|$)))");
     int section = 99;
 
+    int line_no = 0;
+
     while (std::getline(input_file, line)) {
+        line_no++;
         line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
 
         if (line[0] == '.') {
@@ -128,19 +139,20 @@ void Execution::loadFile(const std::string &filename)
 
         char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
 
-        std::cout << "token " << token << std::endl;
-        std::string left;
+        if (!token)
+            throw nts::SyntaxError(line, line_no);
+        std::string left = std::string(token);
         std::string right;
-
-        left =  std::string(token);
-        std::cout << "string " << left << std::endl;
         if ((token = std::strtok(nullptr, " ")))
             right = std::string(token);
+        else
+            throw nts::SyntaxError(line, line_no);
 
         if (section == 1) {
-            if (left == "input") {
+            if (left == "input")
                 this->_inputs[right] = nts::Tristate::UNDEFINED;
-            }
+            if (left == "output")
+                this->_outputs[right] = nts::Tristate::UNDEFINED;
         }
     }
 }
