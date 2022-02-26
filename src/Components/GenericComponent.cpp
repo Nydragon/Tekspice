@@ -10,8 +10,8 @@
 #include <regex>
 #include <iomanip>
 #include "GenericComponent.hpp"
-#include "NanoTekSpiceError.hpp"
-#include "LogicGates/Gates.hpp"
+#include "../NanoTekSpiceError.hpp"
+#include "../LogicGates/Gates.hpp"
 
 nts::GenericComponent::GenericComponent(const std::string &type, const std::string &name)
 {

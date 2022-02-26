@@ -12,9 +12,9 @@
 #include <vector>
 #include <deque>
 #include <unordered_map>
-#include "IComponent.hpp"
-#include "ILogicGate.hpp"
-#include "types.hpp"
+#include "../IComponent.hpp"
+#include "../ILogicGate.hpp"
+#include "../types.hpp"
 
 namespace nts
 {

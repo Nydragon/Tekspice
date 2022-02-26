@@ -44,6 +44,14 @@ namespace nts
     public:
         explicit SyntaxError(const std::string &line, int line_no);
     };
+
+    class NameUsedError : public NanoTekSpiceError
+    {
+    public:
+        explicit NameUsedError(const std::string &name);
+    };
+
+    void validateArgs(int count, char *args_c[]);
 }
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NANOTEKSPICEERROR_HPP

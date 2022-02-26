@@ -26,6 +26,7 @@ void Execution::display()
     int a = 1;
     std::cout << "tick: " << a << std::endl;
     std::cout << "input(s):" << std::endl;
+    TODO("sort by ascii");
     for (auto const &pair: this->_inputs)
         std::cout << "  " << pair.first << ": " << pair.second << std::endl;
     std::cout << "output(s):" << std::endl;
@@ -63,7 +64,7 @@ void Execution::input(const std::string &value)
 
 void Execution::simulate()
 {
-    std::cout << "simulate g" << std::endl;
+    TODO("simulate circuit");
 }
 
 void Execution::loop()
@@ -102,7 +103,7 @@ void Execution::run()
             std::cout << "> ";
             getline(std::cin, line);
             this->setValue(line);
-            if (getValue() == "exit")
+            if (getValue() == "exit" || line.empty())
                 break;
             else if (getValue() == "display")
                 display();
@@ -135,6 +136,8 @@ void Execution::loadFile(const std::string &filename)
 
     int line_no = 0;
 
+    std::vector<std::string> usedNames;
+
     while (std::getline(input_file, line)) {
         line_no++;
         line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
@@ -147,10 +150,7 @@ void Execution::loadFile(const std::string &filename)
             continue;
         }
 
-        std::cout << line << std::endl;
-
         char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
-
         if (!token)
             throw nts::SyntaxError(line, line_no);
         std::string left = std::string(token);
@@ -161,10 +161,21 @@ void Execution::loadFile(const std::string &filename)
             throw nts::SyntaxError(line, line_no);
 
         if (section == 1) {
+            for (const auto &name: usedNames) {
+                if (name == right)
+                    throw nts::NameUsedError(name);
+            }
+            usedNames.push_back(right);
             if (left == "input")
                 this->_inputs[right] = nts::Tristate::UNDEFINED;
             else if (left == "output")
                 this->_outputs[right] = nts::Tristate::UNDEFINED;
+            else if (left == "clock")
+                TODO("clock component");
+            else if (left == "true")
+                TODO("true component");
+            else if (left == "false")
+                TODO("false component");
             else
                 this->circuitry.push_back(new nts::GenericComponent(left, right));
         }

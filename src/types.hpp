@@ -10,12 +10,17 @@
 #define KOWALSKI std::cout << "Kowalski, analysis." << std::endl;
 #define C_ALL(a) cbegin(a), cend(a)
 #define ALL(a) begin(a), end(a)
+#define TODO(a) do { \
+    std::cout << "NOT IMPLEMENTED: " << a << std::endl; \
+    std::cout << "line "<< __LINE__  << " | " << __func__ << "() | " << __FILE__ << std::endl; \
+} while(0)
 
 #include <cstddef>
 
 namespace nts
 {
     class ILogicGate;
+
     class IComponent;
 
     typedef struct

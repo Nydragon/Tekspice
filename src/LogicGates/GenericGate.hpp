@@ -10,7 +10,7 @@
 
 #include "../IComponent.hpp"
 #include "../ILogicGate.hpp"
-#include "../GenericComponent.hpp"
+#include "../Components/GenericComponent.hpp"
 #include <string>
 
 namespace nts {

@@ -8,7 +8,7 @@
 LOCATION = src
 
 FILES = $(LOCATION)/main.cpp\
-		$(LOCATION)/GenericComponent.cpp\
+		$(LOCATION)/Components/GenericComponent.cpp\
 		$(LOCATION)/NanoTekSpiceError.cpp\
 		$(LOCATION)/Execution.cpp\
 		$(LOCATION)/LogicGates/*.cpp
