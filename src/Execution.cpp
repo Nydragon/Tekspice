@@ -21,6 +21,11 @@ std::string Execution::getValue()
     return this->_value;
 }
 
+void Execution::setValue(const std::string &value)
+{
+    this->_value = value;
+}
+
 void Execution::display()
 {
     int a = 1;
@@ -28,10 +33,10 @@ void Execution::display()
     std::cout << "input(s):" << std::endl;
     TODO("sort by ascii");
     for (auto const &pair: this->_inputs)
-        std::cout << "  " << pair.first << ": " << pair.second << std::endl;
+        std::cout << "  " << pair.first << ": " << TRI(pair.second) << std::endl;
     std::cout << "output(s):" << std::endl;
     for (auto const &pair: this->_outputs)
-        std::cout << "  " << pair.first << ": " << pair.second << std::endl;
+        std::cout << "  " << pair.first << ": " << TRI(pair.second) << std::endl;
 }
 
 void Execution::input(const std::string &value)
@@ -180,9 +185,4 @@ void Execution::loadFile(const std::string &filename)
                 this->circuitry.push_back(new nts::GenericComponent(left, right));
         }
     }
-}
-
-void Execution::setValue(const std::string &value)
-{
-    this->_value = value;
 }

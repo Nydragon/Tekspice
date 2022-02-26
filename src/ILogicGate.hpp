@@ -49,7 +49,6 @@ namespace nts
         virtual pin_t &outputPin() = 0;
 
         virtual std::vector<pin_t>getPins() = 0;
-
     };
 }
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ILOGICGATE_HPP

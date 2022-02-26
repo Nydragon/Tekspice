@@ -157,7 +157,7 @@ void nts::GenericComponent::dump() const
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? pin.inner_connection.gate_r->getName() : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
-                  << std::setw(col_w) << pin.state
+                  << std::setw(col_w) << TRI(pin.state)
                   << std::endl;
     }
 

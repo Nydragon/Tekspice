@@ -15,6 +15,8 @@
     std::cout << "line "<< __LINE__  << " | " << __func__ << "() | " << __FILE__ << std::endl; \
 } while(0)
 
+#define TRI(state) (state == nts::Tristate::UNDEFINED ? "U" : std::to_string(state))
+
 #include <cstddef>
 
 namespace nts
