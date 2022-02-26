@@ -11,9 +11,9 @@
 #include <memory>
 #include "GenericComponent.hpp"
 #include "Execution.hpp"
-#include <time.h>
+#include "NanoTekSpiceError.hpp"
 
-void errorArg(const std::string& arg)
+void errorArg(const std::string &arg)
 {
     std::ifstream input_file(arg);
 
@@ -21,8 +21,9 @@ void errorArg(const std::string& arg)
         std::cout << "Enter a filename in param : ./nanotekspice [filename]" << std::endl;
         exit(0);
     }
+
     if (!input_file.is_open())
-        exit(84);
+        throw nts::FileNotFound(arg);
 }
 
 std::unique_ptr<nts::IComponent> createComponent(const std::string &type)
@@ -35,7 +36,11 @@ int main(int argc, char *argv[])
     if (argc != 2)
         return 84;
     errorArg(argv[1]);
-    new Execution(argv[1]);
+
+    auto cli = new Execution(argv[1]);
+
+    cli->run();
+
     return 0;
 }
 

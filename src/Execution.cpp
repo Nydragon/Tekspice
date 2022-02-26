@@ -115,19 +115,32 @@ void Execution::loadFile(const std::string &filename)
 
     while (std::getline(input_file, line)) {
         line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
+
         if (line[0] == '.') {
-            if (line == ".circuitry") {
+            if (line == ".chipsets:") {
                 section = 1;
-            } else if (line == ".links")
+            } else if (line == ".links:")
                 section = 2;
             continue;
         }
-        std::cout << section << std::endl;
+
+        std::cout << line << std::endl;
+
+        char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
+
+        std::cout << "token " << token << std::endl;
+        std::string left;
+        std::string right;
+
+        left =  std::string(token);
+        std::cout << "string " << left << std::endl;
+        if ((token = std::strtok(nullptr, " ")))
+            right = std::string(token);
+
+        if (section == 1) {
+            if (left == "input") {
+                this->_inputs[right] = nts::Tristate::UNDEFINED;
+            }
+        }
     }
 }
-
-//int main() {
-//    Execution l;
-//    l.run();
-//    return 0;
-//}

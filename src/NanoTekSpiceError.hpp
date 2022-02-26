@@ -30,7 +30,7 @@ namespace nts
     class FileNotFound : public NanoTekSpiceError
     {
     public:
-        FileNotFound(std::string const &path);
+        explicit FileNotFound(const std::string &path);
     };
 
     class InvalidLink : public NanoTekSpiceError
@@ -38,8 +38,6 @@ namespace nts
     public:
         InvalidLink(const std::string &type, const std::string &line);
     };
-
 }
-
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NANOTEKSPICEERROR_HPP
