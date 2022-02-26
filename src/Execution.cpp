@@ -67,7 +67,15 @@ void Execution::simulate()
 
 void Execution::loop()
 {
-    std::cout << "loop g" << std::endl;
+    while (true) {
+        try {
+            this->simulate();
+            this->display();
+            sleep(1);
+        } catch (...) {
+            break;
+        }
+    }
 }
 
 void Execution::dump()
@@ -85,11 +93,12 @@ int Execution::isInputAssignment(const std::string &line)
 
 void Execution::run()
 {
-
+    std::string line;
     while (true) {
         try {
             std::cout << "> ";
-            getline(std::cin, this->_value);
+            getline(std::cin, line);
+            this->setValue(line);
             if (getValue() == "exit")
                 break;
             else if (getValue() == "display")
@@ -155,4 +164,9 @@ void Execution::loadFile(const std::string &filename)
                 this->_outputs[right] = nts::Tristate::UNDEFINED;
         }
     }
+}
+
+void Execution::setValue(const std::string &value)
+{
+    this->_value = value;
 }

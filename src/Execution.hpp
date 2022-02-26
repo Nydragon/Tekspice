@@ -24,7 +24,7 @@ public:
 
     std::string getValue();
 
-    void setValue(std::string value);
+    void setValue(const std::string &value);
 
     void run();
 
@@ -44,6 +44,7 @@ public:
     static int isInputAssignment(const std::string &);
 
 private:
+    int _loop = 1;
     std::string _value;
     std::deque<nts::IComponent *> circuitry;
     std::unordered_map<std::string, nts::Tristate> _inputs;
