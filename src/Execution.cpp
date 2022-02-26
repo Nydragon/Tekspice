@@ -9,6 +9,7 @@
 #include "Execution.hpp"
 #include "NanoTekSpiceError.hpp"
 #include "types.hpp"
+#include "LogicGates/Gates.hpp"
 
 Execution::Execution(const std::string &filename)
 {
@@ -80,7 +81,9 @@ void Execution::loop()
 
 void Execution::dump()
 {
-    std::cout << "dump g" << std::endl;
+    for (auto component: this->circuitry) {
+        component->dump();
+    }
 }
 
 int Execution::isInputAssignment(const std::string &line)
@@ -164,6 +167,8 @@ void Execution::loadFile(const std::string &filename)
                 this->_outputs[right] = nts::Tristate::UNDEFINED;
         }
     }
+
+    this->circuitry.push_back(new nts::GenericComponent("4001", "d"));
 }
 
 void Execution::setValue(const std::string &value)
