@@ -163,12 +163,12 @@ void Execution::loadFile(const std::string &filename)
         if (section == 1) {
             if (left == "input")
                 this->_inputs[right] = nts::Tristate::UNDEFINED;
-            if (left == "output")
+            else if (left == "output")
                 this->_outputs[right] = nts::Tristate::UNDEFINED;
+            else
+                this->circuitry.push_back(new nts::GenericComponent(left, right));
         }
     }
-
-    this->circuitry.push_back(new nts::GenericComponent("4001", "d"));
 }
 
 void Execution::setValue(const std::string &value)
