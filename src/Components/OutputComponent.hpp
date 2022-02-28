@@ -22,7 +22,7 @@ namespace nts
     public:
         explicit OutputComponent(const std::string &name);
 
-        ~OutputComponent() override = default;
+        ~OutputComponent() override;
 
         void simulate(std::size_t tick) override;
 

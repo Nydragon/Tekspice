@@ -32,7 +32,7 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
                 this->_pin_no = std::stoi(line);
                 this->pins.resize(this->_pin_no);
                 for (size_t i = 0; i < this->_pin_no; i++)
-                    this->pins[i] = {.number =  i + 1, .state = new nts::Tristate(nts::Tristate::UNDEFINED)};
+                    this->pins[i] = {.number =  i + 1, .state =std::make_unique<nts::Tristate>(nts::Tristate::UNDEFINED)};
             } else if (line == ".circuitry") {
                 section = 1;
             } else if (line == ".links")
@@ -142,4 +142,10 @@ int nts::GenericComponent::findGateIndex(const std::string &name) const
         i++;
     }
     return -1;
+}
+
+nts::GenericComponent::~GenericComponent()
+{
+    for (auto &g: this->circuitry)
+        delete g;
 }

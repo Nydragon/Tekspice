@@ -29,7 +29,7 @@ void nts::ParentComponent::setLink(std::size_t pin, nts::IComponent &other, std:
 {
     int index = this->findPinIndex(pin);
 
-    auto *state = new nts::Tristate(nts::Tristate::UNDEFINED);
+    auto state = std::make_shared<nts::Tristate>(nts::Tristate::UNDEFINED);
 
     this->pins[index].outer_connection.comp_r = &other;
     this->pins[index].outer_connection.pin = otherPin;

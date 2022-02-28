@@ -227,3 +227,14 @@ void Execution::loadFile(const std::string &filename)
         }
     }
 }
+
+std::unique_ptr<nts::IComponent> Execution::createComponent(const std::string &type)
+{
+    return std::unique_ptr<nts::IComponent>(new nts::GenericComponent(type, type + std::to_string(random() % 100000)));
+}
+
+Execution::~Execution()
+{
+    for (const auto& c: this->circuitry)
+        delete c.second;
+}

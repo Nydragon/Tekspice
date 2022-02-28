@@ -42,17 +42,17 @@ std::string nts::GenericGate::getName()
 
 void nts::GenericGate::setInput1(nts::Tristate value)
 {
-    this->pins[0].state = new nts::Tristate(value);
+    *this->pins[0].state = value;
 }
 
 void nts::GenericGate::setInput2(nts::Tristate value)
 {
-    this->pins[1].state = new nts::Tristate(value);
+    *this->pins[1].state = value;
 }
 
 void nts::GenericGate::setOutput(nts::Tristate value)
 {
-    this->pins[2].state = new nts::Tristate(value);
+    *this->pins[2].state = value;
 }
 
 void nts::GenericGate::setLink(std::size_t pin, nts::ILogicGate &other, std::size_t otherPin)
@@ -115,7 +115,7 @@ void nts::GenericGate::setPin(size_t pin, nts::Tristate state)
 
     for (auto &pin_s: this->pins) {
         if (pin_s.number == pin) {
-            pin_s.state = new nts::Tristate(state);
+            *pin_s.state = state;
         }
     }
 }

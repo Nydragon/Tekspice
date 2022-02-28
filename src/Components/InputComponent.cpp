@@ -12,7 +12,7 @@ nts::InputComponent::InputComponent(const std::string &name, nts::Tristate state
 {
     this->_pin_no = 1;
     this->pins.resize(1);
-    this->pins[0] = {.number =  1, .state = new nts::Tristate(state)};
+    this->pins[0] = {.number =  1, .state = std::make_unique<nts::Tristate>(state)};
     this->_tick = 0;
     this->_state = new nts::Tristate(state);
 }
@@ -34,10 +34,15 @@ nts::Tristate nts::InputComponent::compute(std::size_t pin)
 
 void nts::InputComponent::setState(nts::Tristate state)
 {
-    this->_state = new nts::Tristate(state);
+    *this->_state = state;
 }
 
 nts::Tristate *nts::InputComponent::getState() const
 {
     return this->_state;
+}
+
+nts::InputComponent::~InputComponent()
+{
+    delete this->_state;
 }

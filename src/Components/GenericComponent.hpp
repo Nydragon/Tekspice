@@ -28,7 +28,7 @@ namespace nts
 
         GenericComponent(const std::string &type, const std::string &name);
 
-        ~GenericComponent() override = default;
+        ~GenericComponent() override;
 
         void simulate(std::size_t tick) override;
 

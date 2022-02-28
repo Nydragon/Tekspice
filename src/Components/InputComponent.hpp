@@ -25,7 +25,7 @@ namespace nts
     public:
         explicit InputComponent(const std::string &name, nts::Tristate state = nts::Tristate::UNDEFINED);
 
-        ~InputComponent() override = default;
+        ~InputComponent() override;
 
         void simulate(std::size_t tick) override;
 

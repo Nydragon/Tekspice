@@ -10,7 +10,7 @@
 
 #include <cstddef>
 #include <iostream>
-
+#include <memory>
 
 #define KOWALSKI (std::cout << "Kowalski, analysis." << std::endl);
 #define C_ALL(a) cbegin(a), cend(a)
@@ -21,7 +21,6 @@
 } while(0)
 
 #define TRI(state) ((*state) == nts::Tristate::UNDEFINED ? "U" : std::to_string((*state)))
-
 
 namespace nts
 {
@@ -44,7 +43,7 @@ namespace nts
     typedef struct
     {
         size_t number = 0;
-        nts::Tristate *state = new nts::Tristate();
+        std::shared_ptr<nts::Tristate> state = std::make_shared<nts::Tristate>();
         componentConnection outer_connection = componentConnection();
         logicGateConnection inner_connection = logicGateConnection();
     } pin_t;

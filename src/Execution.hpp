@@ -22,7 +22,7 @@ class Execution
 public:
     explicit Execution(const std::string &filename);
 
-    ~Execution() = default;
+    ~Execution();
 
     std::string getValue();
 
@@ -45,8 +45,11 @@ public:
 
     static int isInputAssignment(const std::string &);
 
+    std::unique_ptr<nts::IComponent> createComponent(const std::string &type);
+
 private:
     std::string _value;
+
     std::unordered_map<std::string, nts::IComponent *> circuitry;
 
     std::unordered_map<std::string, nts::InputComponent *> _inputs;
