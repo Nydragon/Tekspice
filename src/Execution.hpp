@@ -14,6 +14,8 @@
 #include <regex>
 #include <unordered_map>
 #include "IComponent.hpp"
+#include "Components/InputComponent.hpp"
+#include "Components/OutputComponent.hpp"
 
 class Execution
 {
@@ -44,11 +46,12 @@ public:
     static int isInputAssignment(const std::string &);
 
 private:
-    int _loop = 1;
     std::string _value;
-    std::deque<nts::IComponent *> circuitry;
-    std::unordered_map<std::string, nts::Tristate> _inputs;
-    std::unordered_map<std::string, nts::Tristate> _outputs;
+    std::unordered_map<std::string, nts::IComponent *> circuitry;
+
+    std::unordered_map<std::string, nts::InputComponent *> _inputs;
+
+    std::unordered_map<std::string, nts::OutputComponent *> _outputs;
 };
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_EXECUTION_HPP

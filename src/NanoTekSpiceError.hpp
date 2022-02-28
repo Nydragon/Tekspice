@@ -51,6 +51,12 @@ namespace nts
         explicit NameUsedError(const std::string &name);
     };
 
+    class PinNotFoundError : public NanoTekSpiceError
+    {
+    public:
+        explicit PinNotFoundError(const std::string &name, size_t pin);
+    };
+
     void validateArgs(int count, char *args_c[]);
 }
 

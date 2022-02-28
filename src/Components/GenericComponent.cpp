@@ -152,8 +152,7 @@ void nts::GenericComponent::dump() const
               << std::setw(col_w) << "state" << std::endl;
     for (auto &pin: this->pins) {
         std::cout << std::setw(col_w) << pin.number
-                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
-            .outer_connection.comp_r)->getName() : "N/A")
+                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? "YES" : "N/A")
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? pin.inner_connection.gate_r->getName() : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
@@ -215,5 +214,6 @@ int nts::GenericComponent::findPinIndex(size_t pin) const
             return i;
         i++;
     }
-    return -1;
+
+    throw nts::PinNotFoundError(this->getName(), pin);
 }

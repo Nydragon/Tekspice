@@ -33,10 +33,10 @@ void Execution::display()
     std::cout << "input(s):" << std::endl;
     TODO("sort by ascii");
     for (auto const &pair: this->_inputs)
-        std::cout << "  " << pair.first << ": " << TRI(pair.second) << std::endl;
+        std::cout << "  " << pair.first << ": " << TRI(pair.second->getState()) << std::endl;
     std::cout << "output(s):" << std::endl;
     for (auto const &pair: this->_outputs)
-        std::cout << "  " << pair.first << ": " << TRI(pair.second) << std::endl;
+        std::cout << "  " << pair.first << ": " << TRI(pair.second->getState()) << std::endl;
 }
 
 void Execution::input(const std::string &value)
@@ -47,7 +47,7 @@ void Execution::input(const std::string &value)
     std::smatch match;
 
     std::string buffString;
-    nts::Tristate buffValue;
+    nts::Tristate newState;
 
     if (std::regex_search(ALL(value), match, a) == 1)
         buffString = match[0];
@@ -55,20 +55,23 @@ void Execution::input(const std::string &value)
         throw nts::NanoTekSpiceError("Input \"" + buffString + "\" does not exist.");
     if (std::regex_search(ALL(value), match, b) == 1) {
         if (match[0] == "1")
-            buffValue = nts::Tristate::TRUE;
+            newState = nts::Tristate::TRUE;
         else if (match[0] == "0")
-            buffValue = nts::Tristate::FALSE;
+            newState = nts::Tristate::FALSE;
         else if (match[0] == "-1")
-            buffValue = nts::Tristate::UNDEFINED;
+            newState = nts::Tristate::UNDEFINED;
         else
             throw nts::NanoTekSpiceError("Left hand of assignment operator should be 1 or 0.");
     }
 
-    this->_inputs[buffString] = buffValue;
+    this->_inputs[buffString]->setState(newState);
 }
 
 void Execution::simulate()
 {
+    for (auto i: this->_inputs)
+        i.second->simulate(1);
+
     TODO("simulate circuit");
 }
 
@@ -87,8 +90,8 @@ void Execution::loop()
 
 void Execution::dump()
 {
-    for (auto component: this->circuitry) {
-        component->dump();
+    for (const auto &component: this->circuitry) {
+        component.second->dump();
     }
 }
 
@@ -171,18 +174,41 @@ void Execution::loadFile(const std::string &filename)
                     throw nts::NameUsedError(name);
             }
             usedNames.push_back(right);
-            if (left == "input")
-                this->_inputs[right] = nts::Tristate::UNDEFINED;
-            else if (left == "output")
-                this->_outputs[right] = nts::Tristate::UNDEFINED;
-            else if (left == "clock")
+            if (left == "input") {
+                auto input = new nts::InputComponent(right);
+                this->circuitry[right] = input;
+                this->_inputs[right] = input;
+            } else if (left == "output") {
+                auto output = new nts::OutputComponent(right);
+                this->circuitry[right] = output;
+                this->_outputs[right] = output;
+            } else if (left == "clock")
                 TODO("clock component");
             else if (left == "true")
                 TODO("true component");
             else if (left == "false")
                 TODO("false component");
             else
-                this->circuitry.push_back(new nts::GenericComponent(left, right));
+                this->circuitry[right] = new nts::GenericComponent(left, right);
+        }
+
+        if (section == 2) {
+            std::cout << right << " " << left << std::endl;
+
+            const auto beforeCol = std::regex(".+(?=:)");
+            const auto afterCol = std::regex(":.+");
+            std::string compNameLeft = std::regex_token_iterator(C_ALL(left), beforeCol, 0)->str();
+            std::string compNameRight = std::regex_token_iterator(C_ALL(right), beforeCol, 0)->str();
+            /**
+             * I need to exclude the colon from the match but
+             * \K and lookbehind do not work in c++ regex flavour
+             * therefore I skip the first character of the match
+             */
+            size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
+            size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
+            std::cout << compNameLeft << " " << pinNumLeft << " " << compNameRight << " " << pinNumRight << std::endl;
+
+            this->circuitry[compNameLeft]->setLink(pinNumLeft, *this->circuitry[compNameRight], pinNumRight);
         }
     }
 }

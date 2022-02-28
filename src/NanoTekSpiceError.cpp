@@ -64,3 +64,8 @@ void nts::validateArgs(int count, char *args_c[])
         }
     }
 }
+
+nts::PinNotFoundError::PinNotFoundError(const std::string &name, size_t pin)
+    : NanoTekSpiceError("Pin \"" + std::to_string(pin) + "\" not found in " + name + ".")
+{
+}

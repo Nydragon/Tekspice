@@ -7,7 +7,12 @@
 
 #ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_TYPES_HPP
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_TYPES_HPP
-#define KOWALSKI std::cout << "Kowalski, analysis." << std::endl;
+
+#include <cstddef>
+#include <iostream>
+
+
+#define KOWALSKI (std::cout << "Kowalski, analysis." << std::endl);
 #define C_ALL(a) cbegin(a), cend(a)
 #define ALL(a) begin(a), end(a)
 #define TODO(a) do { \
@@ -17,7 +22,6 @@
 
 #define TRI(state) (state == nts::Tristate::UNDEFINED ? "U" : std::to_string(state))
 
-#include <cstddef>
 
 namespace nts
 {
