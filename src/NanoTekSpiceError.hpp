@@ -57,6 +57,19 @@ namespace nts
         explicit PinNotFoundError(const std::string &name, size_t pin);
     };
 
+    class EmptyCircuitryError : public NanoTekSpiceError
+    {
+    public:
+        explicit EmptyCircuitryError();
+    };
+
+    class ComponentNotFoundError : public NanoTekSpiceError
+    {
+    public:
+        explicit ComponentNotFoundError(const std::string &name);
+        explicit ComponentNotFoundError(const std::string &name, int line_number);
+    };
+
     void validateArgs(int count, char *args_c[]);
 }
 

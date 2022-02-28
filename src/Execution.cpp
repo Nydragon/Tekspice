@@ -68,11 +68,9 @@ void Execution::input(const std::string &value)
 
 void Execution::simulate()
 {
-
     this->_tick++;
     for (auto i: this->_inputs)
         i.second->simulate(this->_tick);
-
     for (const auto &i: this->circuitry)
         i.second->simulate(this->_tick);
     for (const auto &i: this->circuitry)
@@ -137,61 +135,73 @@ void Execution::run()
 
 void Execution::loadFile(const std::string &filename)
 {
-    std::ifstream input_file(filename);
+    try {
+        std::ifstream input_file(filename);
 
-    if (!input_file.is_open())
-        throw nts::FileNotFound(filename);
+        if (!input_file.is_open())
+            throw nts::FileNotFound(filename);
 
-    std::string line;
-    const auto r = std::regex(R"(.*?(?=(#|$)))");
-    int section = 99;
+        std::string line;
+        const auto r = std::regex(R"(.*?(?=(#|$)))");
+        int section = 99;
 
-    int line_no = 0;
+        int line_no = 0;
 
-    while (std::getline(input_file, line)) {
-        line_no++;
-        line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
-        if (line.empty())
-            continue;
-        if (line[0] == '.') {
-            if (line == ".chipsets:") {
-                section = 1;
-            } else if (line == ".links:")
-                section = 2;
-            continue;
+        while (std::getline(input_file, line)) {
+            line_no++;
+            line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
+            if (line.empty())
+                continue;
+            if (line[0] == '.') {
+                if (line == ".chipsets:") {
+                    section = 1;
+                } else if (line == ".links:")
+                    section = 2;
+                continue;
+            }
+
+            char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
+            if (!token)
+                throw nts::SyntaxError(line, line_no);
+            std::string left = std::string(token);
+            std::string right;
+            if ((token = std::strtok(nullptr, " ")))
+                right = std::string(token);
+            else
+                throw nts::SyntaxError(line, line_no);
+
+            if (section == 1) {
+                if (this->circuitry.contains(right))
+                    throw nts::NameUsedError(right);
+                this->circuitry[right] = createComponent(left, right);
+            }
+
+            if (section == 2) {
+                const auto beforeCol = std::regex(".+(?=:)");
+                const auto afterCol = std::regex(":.+");
+                std::string compNameLeft = std::regex_token_iterator(C_ALL(left), beforeCol, 0)->str();
+                std::string compNameRight = std::regex_token_iterator(C_ALL(right), beforeCol, 0)->str();
+                /**
+                 * I need to exclude the colon from the match but
+                 * \K and lookbehind do not work in c++ regex flavour
+                 * therefore I skip the first character of the match
+                 */
+                size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
+                size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
+
+                if (!this->circuitry.contains(compNameLeft))
+                    throw nts::ComponentNotFoundError(compNameLeft, line_no);
+                if (!this->circuitry.contains(compNameRight))
+                    throw nts::ComponentNotFoundError(compNameRight, line_no);
+                this->circuitry[compNameLeft]->setLink(pinNumLeft, *this->circuitry[compNameRight], pinNumRight);
+            }
+
+            if (this->circuitry.empty())
+                throw nts::EmptyCircuitryError();
         }
-
-        char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
-        if (!token)
-            throw nts::SyntaxError(line, line_no);
-        std::string left = std::string(token);
-        std::string right;
-        if ((token = std::strtok(nullptr, " ")))
-            right = std::string(token);
-        else
-            throw nts::SyntaxError(line, line_no);
-
-        if (section == 1) {
-            if (this->circuitry.contains(right))
-                throw nts::NameUsedError(right);
-            this->circuitry[right] = createComponent(left, right);
-        }
-
-        if (section == 2) {
-            const auto beforeCol = std::regex(".+(?=:)");
-            const auto afterCol = std::regex(":.+");
-            std::string compNameLeft = std::regex_token_iterator(C_ALL(left), beforeCol, 0)->str();
-            std::string compNameRight = std::regex_token_iterator(C_ALL(right), beforeCol, 0)->str();
-            /**
-             * I need to exclude the colon from the match but
-             * \K and lookbehind do not work in c++ regex flavour
-             * therefore I skip the first character of the match
-             */
-            size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
-            size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
-
-            this->circuitry[compNameLeft]->setLink(pinNumLeft, *this->circuitry[compNameRight], pinNumRight);
-        }
+    } catch (std::exception &err) {
+        std::cerr << err.what() << std::endl;
+        exit(84);
     }
 }
 

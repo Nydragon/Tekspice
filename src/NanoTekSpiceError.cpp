@@ -69,3 +69,18 @@ nts::PinNotFoundError::PinNotFoundError(const std::string &name, size_t pin)
     : NanoTekSpiceError("Pin \"" + std::to_string(pin) + "\" not found in " + name + ".")
 {
 }
+
+nts::EmptyCircuitryError::EmptyCircuitryError()
+    : NanoTekSpiceError("No circuitry provided.")
+{
+}
+
+nts::ComponentNotFoundError::ComponentNotFoundError(const std::string &name)
+    : NanoTekSpiceError("Component \"" + name + "\" not found.")
+{
+}
+
+nts::ComponentNotFoundError::ComponentNotFoundError(const std::string &name, int line_no)
+    : NanoTekSpiceError("Line " + std::to_string(line_no) + ": Component \"" + name + "\" does not exist.")
+{
+}
