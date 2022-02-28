@@ -10,7 +10,7 @@
 #include "NanoTekSpiceError.hpp"
 #include "types.hpp"
 #include "LogicGates/Gates.hpp"
-#include "Components/GenericComponent.hpp"
+#include "Components/Components.hpp"
 
 Execution::Execution(const std::string &filename)
 {
@@ -78,24 +78,6 @@ void Execution::simulate()
     for (const auto &i: this->circuitry)
         i.second->simulate(this->_tick);
 }
-
-//{
-//this->_tick++;
-//
-//for (auto i: this->_inputs)
-//i.second->simulate(this->_tick);
-//
-//int outputEmpty = 1;
-//
-//while (outputEmpty) {
-//outputEmpty = 0;
-//for (const auto &i: this->circuitry)
-//i.second->simulate(this->_tick);
-//for (const auto &i: this->_outputs) {
-//if (*i.second->getState() == nts::Tristate::UNDEFINED)
-//outputEmpty = 1;
-//}
-//}
 
 void Execution::loop()
 {
@@ -201,11 +183,11 @@ void Execution::loadFile(const std::string &filename)
                 this->circuitry[right] = output;
                 this->_outputs[right] = output;
             } else if (left == "clock")
-                TODO("clock component");
+                this->circuitry[right] = new nts::ClockComponent(right);
             else if (left == "true")
-                TODO("true component");
+                this->circuitry[right] = new nts::TrueComponent(right);
             else if (left == "false")
-                TODO("false component");
+                this->circuitry[right] = new nts::FalseComponent(right);
             else
                 this->circuitry[right] = new nts::GenericComponent(left, right);
         }
@@ -235,6 +217,29 @@ std::unique_ptr<nts::IComponent> Execution::createComponent(const std::string &t
 
 Execution::~Execution()
 {
-    for (const auto& c: this->circuitry)
+    for (const auto &c: this->circuitry)
         delete c.second;
 }
+
+//std::unique_ptr<nts::IComponent> Execution::createComponent(const std::string &type, const std::string &name)
+//{
+//    nts::IComponent *component = nullptr;
+//
+//    if (type == "input") {
+//        this->_inputs[name] = new nts::InputComponent(name);
+//        component = this->_inputs[name];
+//    } else if (type == "output") {
+//        this->_outputs[name] = new nts::OutputComponent(name);
+//        component = this->_outputs[name];
+//    } else if (type == "clock")
+//        component = new nts::ClockComponent(name);
+//    else if (type == "true")
+//        component = new nts::TrueComponent(name);
+//    else if (type == "false")
+//        component = new nts::FalseComponent(name);
+//    else
+//        component = new nts::GenericComponent(type, name);
+//
+//    this->circuitry[name] = std::unique_ptr<nts::IComponent>(component);
+//    //    return std::unique_ptr<nts::IComponent>(component);
+//}
