@@ -12,8 +12,9 @@ nts::OutputComponent::OutputComponent(const std::string &name)
 {
     this->_pin_no = 1;
     this->pins.resize(1);
-    this->pins[0] = {.number =  1, .state = nts::Tristate::UNDEFINED};
+    this->pins[0] = {.number =  1, .state = new nts::Tristate(nts::Tristate::UNDEFINED)};
     this->_tick = 0;
+    this->_state = new nts::Tristate(nts::Tristate::UNDEFINED);
 }
 
 void nts::OutputComponent::simulate(std::size_t tick)
@@ -27,16 +28,16 @@ nts::Tristate nts::OutputComponent::compute(std::size_t pin)
 {
     int index = this->findPinIndex(pin);
 
-    this->pins[index].state = this->_state;
-    return this->_state;
+    *this->_state = *this->pins[index].state;
+    return *this->_state;
 }
 
 void nts::OutputComponent::setState(nts::Tristate state)
 {
-    this->_state = state;
+    this->_state = new nts::Tristate(state);
 }
 
-nts::Tristate nts::OutputComponent::getState() const
+nts::Tristate *nts::OutputComponent::getState() const
 {
     return this->_state;
 }

@@ -8,7 +8,7 @@
 #include <iostream>
 #include "AndGate.hpp"
 
-nts::AndGate::AndGate(std::string name) : GenericGate(name)
+nts::AndGate::AndGate(const std::string &name) : GenericGate(name)
 {
 }
 

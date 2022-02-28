@@ -20,7 +20,7 @@
     std::cout << "line "<< __LINE__  << " | " << __func__ << "() | " << __FILE__ << std::endl; \
 } while(0)
 
-#define TRI(state) (state == nts::Tristate::UNDEFINED ? "U" : std::to_string(state))
+#define TRI(state) ((*state) == nts::Tristate::UNDEFINED ? "U" : std::to_string((*state)))
 
 
 namespace nts
@@ -44,7 +44,7 @@ namespace nts
     typedef struct
     {
         size_t number = 0;
-        nts::Tristate state = nts::Tristate::UNDEFINED;
+        nts::Tristate *state = new nts::Tristate();
         componentConnection outer_connection = componentConnection();
         logicGateConnection inner_connection = logicGateConnection();
     } pin_t;

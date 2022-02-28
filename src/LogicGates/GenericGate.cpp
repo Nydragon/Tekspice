@@ -8,6 +8,7 @@
 #include <iostream>
 #include <iomanip>
 #include "GenericGate.hpp"
+#include "../Components/ParentComponent.hpp"
 
 nts::GenericGate::GenericGate(const std::string &name)
 {
@@ -21,17 +22,17 @@ nts::GenericGate::GenericGate(const std::string &name)
 
 nts::Tristate nts::GenericGate::getInput1()
 {
-    return this->pins[0].state;
+    return *this->pins[0].state;
 }
 
 nts::Tristate nts::GenericGate::getInput2()
 {
-    return this->pins[1].state;
+    return *this->pins[1].state;
 }
 
 nts::Tristate nts::GenericGate::getOutput()
 {
-    return this->pins[2].state;
+    return *this->pins[2].state;
 }
 
 std::string nts::GenericGate::getName()
@@ -41,17 +42,17 @@ std::string nts::GenericGate::getName()
 
 void nts::GenericGate::setInput1(nts::Tristate value)
 {
-    this->pins[0].state = value;
+    this->pins[0].state = new nts::Tristate(value);
 }
 
 void nts::GenericGate::setInput2(nts::Tristate value)
 {
-    this->pins[1].state = value;
+    this->pins[1].state = new nts::Tristate(value);
 }
 
 void nts::GenericGate::setOutput(nts::Tristate value)
 {
-    this->pins[2].state = value;
+    this->pins[2].state = new nts::Tristate(value);
 }
 
 void nts::GenericGate::setLink(std::size_t pin, nts::ILogicGate &other, std::size_t otherPin)
@@ -99,7 +100,7 @@ void nts::GenericGate::dump()
               << std::setw(col_w) << "state" << std::endl;
     for (auto &pin: this->pins) {
         std::cout << std::setw(col_w) << pin.number
-                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<GenericComponent *>(pin
+                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? reinterpret_cast<ParentComponent *>(pin
             .outer_connection.comp_r)->getName() : "N/A")
                   << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
                   << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? pin.inner_connection.gate_r->getName() : "N/A")
@@ -114,7 +115,7 @@ void nts::GenericGate::setPin(size_t pin, nts::Tristate state)
 
     for (auto &pin_s: this->pins) {
         if (pin_s.number == pin) {
-            pin_s.state = state;
+            pin_s.state = new nts::Tristate(state);
         }
     }
 }

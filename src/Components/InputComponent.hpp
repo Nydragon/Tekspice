@@ -21,7 +21,7 @@ namespace nts
 
         std::size_t _tick = 0;
 
-        nts::Tristate _state = nts::Tristate::UNDEFINED;
+        nts::Tristate *_state;
     public:
         explicit InputComponent(const std::string &name, nts::Tristate state = nts::Tristate::UNDEFINED);
 
@@ -33,7 +33,7 @@ namespace nts
 
         void setState(nts::Tristate state);
 
-        nts::Tristate getState() const;
+        nts::Tristate* getState() const;
     };
 }
 

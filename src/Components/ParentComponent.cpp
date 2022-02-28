@@ -29,12 +29,19 @@ void nts::ParentComponent::setLink(std::size_t pin, nts::IComponent &other, std:
 {
     int index = this->findPinIndex(pin);
 
-    if (this->pins[index].outer_connection.comp_r == &other && this->pins[index].outer_connection.pin == otherPin)
-        return;
+    auto *state = new nts::Tristate(nts::Tristate::UNDEFINED);
+
     this->pins[index].outer_connection.comp_r = &other;
     this->pins[index].outer_connection.pin = otherPin;
+    this->pins[index].state = state;
 
-    other.setLink(otherPin, static_cast<IComponent &>(*this), pin);
+    auto *downcastedComponent = dynamic_cast<ParentComponent *>(&other);
+
+    int otherIndex = downcastedComponent->findPinIndex(otherPin);
+
+    downcastedComponent->pins[otherIndex].outer_connection.comp_r = this;
+    downcastedComponent->pins[otherIndex].outer_connection.pin = pin;
+    downcastedComponent->pins[otherIndex].state = state;
 }
 
 int nts::ParentComponent::findPinIndex(size_t pin) const
@@ -70,4 +77,14 @@ void nts::ParentComponent::dump() const
                   << std::setw(col_w) << TRI(pin.state)
                   << std::endl;
     }
+}
+
+void nts::ParentComponent::setName(const std::string &name)
+{
+    this->_name = name;
+}
+
+void nts::ParentComponent::setType(const std::string &type)
+{
+    this->_type = type;
 }

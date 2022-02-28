@@ -10,6 +10,7 @@
 #include "NanoTekSpiceError.hpp"
 #include "types.hpp"
 #include "LogicGates/Gates.hpp"
+#include "Components/GenericComponent.hpp"
 
 Execution::Execution(const std::string &filename)
 {
@@ -28,10 +29,8 @@ void Execution::setValue(const std::string &value)
 
 void Execution::display()
 {
-    int a = 1;
-    std::cout << "tick: " << a << std::endl;
+    std::cout << "tick: " << this->_tick << std::endl;
     std::cout << "input(s):" << std::endl;
-    TODO("sort by ascii");
     for (auto const &pair: this->_inputs)
         std::cout << "  " << pair.first << ": " << TRI(pair.second->getState()) << std::endl;
     std::cout << "output(s):" << std::endl;
@@ -41,7 +40,7 @@ void Execution::display()
 
 void Execution::input(const std::string &value)
 {
-    std::regex a("[a-zA-Z][a-zA-Z0-9]*");
+    std::regex a("[a-zA-Z][a-zA-Z0-9_]*");
     std::regex b("-?\\d+");
 
     std::smatch match;
@@ -69,11 +68,34 @@ void Execution::input(const std::string &value)
 
 void Execution::simulate()
 {
-    for (auto i: this->_inputs)
-        i.second->simulate(1);
 
-    TODO("simulate circuit");
+    this->_tick++;
+    for (auto i: this->_inputs)
+        i.second->simulate(this->_tick);
+
+    for (const auto &i: this->circuitry)
+        i.second->simulate(this->_tick);
+    for (const auto &i: this->circuitry)
+        i.second->simulate(this->_tick);
 }
+
+//{
+//this->_tick++;
+//
+//for (auto i: this->_inputs)
+//i.second->simulate(this->_tick);
+//
+//int outputEmpty = 1;
+//
+//while (outputEmpty) {
+//outputEmpty = 0;
+//for (const auto &i: this->circuitry)
+//i.second->simulate(this->_tick);
+//for (const auto &i: this->_outputs) {
+//if (*i.second->getState() == nts::Tristate::UNDEFINED)
+//outputEmpty = 1;
+//}
+//}
 
 void Execution::loop()
 {
@@ -97,7 +119,7 @@ void Execution::dump()
 
 int Execution::isInputAssignment(const std::string &line)
 {
-    std::regex a("[[:alpha:]][[:alpha:]0-9]*=-?\\d+");
+    std::regex a("[[:alpha:]][[:alpha:]0-9_]*=-?\\d+");
     std::smatch match;
 
     return std::regex_search(ALL(line), match, a);
@@ -144,12 +166,11 @@ void Execution::loadFile(const std::string &filename)
 
     int line_no = 0;
 
-    std::vector<std::string> usedNames;
-
     while (std::getline(input_file, line)) {
         line_no++;
         line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
-
+        if (line.empty())
+            continue;
         if (line[0] == '.') {
             if (line == ".chipsets:") {
                 section = 1;
@@ -169,11 +190,8 @@ void Execution::loadFile(const std::string &filename)
             throw nts::SyntaxError(line, line_no);
 
         if (section == 1) {
-            for (const auto &name: usedNames) {
-                if (name == right)
-                    throw nts::NameUsedError(name);
-            }
-            usedNames.push_back(right);
+            if (this->circuitry.contains(right))
+                throw nts::NameUsedError(right);
             if (left == "input") {
                 auto input = new nts::InputComponent(right);
                 this->circuitry[right] = input;
@@ -193,8 +211,6 @@ void Execution::loadFile(const std::string &filename)
         }
 
         if (section == 2) {
-            std::cout << right << " " << left << std::endl;
-
             const auto beforeCol = std::regex(".+(?=:)");
             const auto afterCol = std::regex(":.+");
             std::string compNameLeft = std::regex_token_iterator(C_ALL(left), beforeCol, 0)->str();
@@ -206,7 +222,6 @@ void Execution::loadFile(const std::string &filename)
              */
             size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
             size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
-            std::cout << compNameLeft << " " << pinNumLeft << " " << compNameRight << " " << pinNumRight << std::endl;
 
             this->circuitry[compNameLeft]->setLink(pinNumLeft, *this->circuitry[compNameRight], pinNumRight);
         }

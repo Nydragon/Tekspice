@@ -6,19 +6,16 @@
 */
 
 #include <fstream>
-#include <iostream>
 #include <regex>
-#include <iomanip>
 #include "GenericComponent.hpp"
 #include "../NanoTekSpiceError.hpp"
 #include "../LogicGates/Gates.hpp"
 
 nts::GenericComponent::GenericComponent(const std::string &type, const std::string &name)
+    : ParentComponent(name, type)
 {
 
     std::ifstream input_file(nts::componentCfgLocation + type + ".cfg");
-    this->_name = name;
-    this->_type = type;
 
     if (!input_file.is_open())
         throw nts::FileNotFound(nts::componentCfgLocation + type + ".cfg");
@@ -35,7 +32,7 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
                 this->_pin_no = std::stoi(line);
                 this->pins.resize(this->_pin_no);
                 for (size_t i = 0; i < this->_pin_no; i++)
-                    this->pins[i] = {.number =  i + 1};
+                    this->pins[i] = {.number =  i + 1, .state = new nts::Tristate(nts::Tristate::UNDEFINED)};
             } else if (line == ".circuitry") {
                 section = 1;
             } else if (line == ".links")
@@ -69,7 +66,7 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
             size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
             size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
             int gateIndex = findGateIndex(compNameLeft);
-            int pin_i = findPinIndex(pinNumRight);
+            int pin_i = this->findPinIndex(pinNumRight);
 
             if (compNameRight != "self") {
                 int otherGateIndex = findGateIndex(compNameRight);
@@ -88,81 +85,31 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
 
 void nts::GenericComponent::simulate(std::size_t tick)
 {
-    for (auto &pin_l: this->pins) {
-        if (pin_l.inner_connection.gate_r != nullptr)
-            pin_l.inner_connection.gate_r->setPin(pin_l.inner_connection.pin, pin_l.state);
+    for (auto &pin: this->pins) {
+        if (pin.inner_connection.gate_r != nullptr)
+            pin.inner_connection.gate_r->setPin(pin.inner_connection.pin, *pin.state);
     }
-
     int calculated = 0;
 
-    while (!calculated) {
-        calculated = 1;
+    while (calculated < 1) {
         for (auto &gate: this->circuitry) {
             std::vector<nts::pin_t> gatePins = gate->getPins();
-
-            if ((gatePins.size() == 3 && gatePins[2].state != nts::Tristate::UNDEFINED) ||
-                (gatePins.size() == 2 && gatePins[1].state != nts::Tristate::UNDEFINED)) {
-                continue;
-            }
-            if (gatePins.size() == 3 &&
-                (((gatePins[0].state == nts::Tristate::UNDEFINED && gatePins[0].inner_connection.pin > 0) ||
-                  (gatePins[1].state == nts::Tristate::UNDEFINED && gatePins[1].inner_connection.pin > 0)))) {
-                calculated = 0;
-                continue;
-            }
 
             nts::Tristate newState = gate->compute();
 
             if (gate->outputPin().outer_connection.pin > 0) {
-                this->pins[this->findPinIndex(gate->outputPin().outer_connection.pin)].state = newState;
+                *(this->pins[this->findPinIndex(gate->outputPin().outer_connection.pin)].state) = newState;
             } else if (gate->outputPin().inner_connection.pin > 0) {
                 gate->outputPin().inner_connection.gate_r->setPin(gate->outputPin().inner_connection.pin, newState);
             }
-            calculated = 0;
         }
+        calculated++;
     }
 }
 
 nts::Tristate nts::GenericComponent::compute(std::size_t pin)
 {
     return this->pins[this->findPinIndex(pin)].inner_connection.gate_r->compute();
-}
-
-void nts::GenericComponent::setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin)
-{
-    size_t index = this->findPinIndex(pin);
-
-    if (this->pins[index].outer_connection.comp_r == &other && this->pins[index].outer_connection.pin == otherPin)
-        return;
-    this->pins[index].outer_connection.comp_r = &other;
-    this->pins[index].outer_connection.pin = otherPin;
-    other.setLink(otherPin, static_cast<IComponent &>(*this), pin);
-}
-
-void nts::GenericComponent::dump() const
-{
-    int col_w = 15;
-
-    std::cout << "Component " << this->getType() << " \"" << this->getName() << "\"" << std::endl;
-    std::cout << std::setw(col_w) << "Pin No."
-              << std::setw(col_w) << "outer con"
-              << std::setw(col_w) << "outer con Pin"
-              << std::setw(col_w) << "inner con"
-              << std::setw(col_w) << "inner con Pin"
-              << std::setw(col_w) << "state" << std::endl;
-    for (auto &pin: this->pins) {
-        std::cout << std::setw(col_w) << pin.number
-                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? "YES" : "N/A")
-                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? pin.inner_connection.gate_r->getName() : "N/A")
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
-                  << std::setw(col_w) << TRI(pin.state)
-                  << std::endl;
-    }
-
-    for (auto &gate: this->circuitry) {
-        gate->dump();
-    }
 }
 
 nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const std::string &name)
@@ -179,6 +126,8 @@ nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const
         return new NorGate(name);
     else if ("xnor" == type)
         return new XnorGate(name);
+    else if ("not" == type)
+        return new NotGate(name);
     else
         throw nts::NanoTekSpiceError("Gate: \"" + name + "\" not found");
 }
@@ -193,27 +142,4 @@ int nts::GenericComponent::findGateIndex(const std::string &name) const
         i++;
     }
     return -1;
-}
-
-std::string nts::GenericComponent::getName() const
-{
-    return this->_name;
-}
-
-std::string nts::GenericComponent::getType() const
-{
-    return this->_type;
-}
-
-int nts::GenericComponent::findPinIndex(size_t pin) const
-{
-    int i = 0;
-
-    for (auto &pin_s: this->pins) {
-        if (pin_s.number == pin)
-            return i;
-        i++;
-    }
-
-    throw nts::PinNotFoundError(this->getName(), pin);
 }

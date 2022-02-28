@@ -7,12 +7,11 @@
 
 #ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTNOTGATE_HPP
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_NOTNOTGATE_HPP
-#include "../IComponent.hpp"
-#include "../ILogicGate.hpp"
-#include <string>
+
+#include "GenericGate.hpp"
 
 namespace nts {
-    class NotNotGate: virtual public ILogicGate
+    class NotNotGate: virtual public GenericGate
     {
         public:
             NotNotGate(std::string name);

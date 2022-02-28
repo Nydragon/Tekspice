@@ -52,6 +52,8 @@ private:
     std::unordered_map<std::string, nts::InputComponent *> _inputs;
 
     std::unordered_map<std::string, nts::OutputComponent *> _outputs;
+
+    int _tick = 0;
 };
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_EXECUTION_HPP

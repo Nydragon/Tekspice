@@ -12,8 +12,9 @@ nts::InputComponent::InputComponent(const std::string &name, nts::Tristate state
 {
     this->_pin_no = 1;
     this->pins.resize(1);
-    this->pins[0] = {.number =  1, .state = state};
+    this->pins[0] = {.number =  1, .state = new nts::Tristate(state)};
     this->_tick = 0;
+    this->_state = new nts::Tristate(state);
 }
 
 void nts::InputComponent::simulate(std::size_t tick)
@@ -27,16 +28,16 @@ nts::Tristate nts::InputComponent::compute(std::size_t pin)
 {
     int index = this->findPinIndex(pin);
 
-    this->pins[index].state = this->_state;
-    return this->_state;
+    *(this->pins[index].state) = *this->_state;
+    return *this->_state;
 }
 
 void nts::InputComponent::setState(nts::Tristate state)
 {
-    this->_state = state;
+    this->_state = new nts::Tristate(state);
 }
 
-nts::Tristate nts::InputComponent::getState() const
+nts::Tristate *nts::InputComponent::getState() const
 {
     return this->_state;
 }

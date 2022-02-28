@@ -8,9 +8,8 @@
 #ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENGATE_HPP
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENGATE_HPP
 
-#include "../IComponent.hpp"
+
 #include "../ILogicGate.hpp"
-#include "../Components/GenericComponent.hpp"
 #include <string>
 
 namespace nts {

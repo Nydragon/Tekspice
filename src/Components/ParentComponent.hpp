@@ -26,16 +26,20 @@ namespace nts
 
         std::vector<pin_t> pins;
 
-        virtual std::string getName() const;
-
-        virtual std::string getType() const;
-
         void setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin) override;
 
         virtual int findPinIndex(size_t pin) const;
 
         void dump() const override;
 
+        virtual void setName(const std::string &name);
+
+        virtual void setType(const std::string &type);
+
+    public:
+        virtual std::string getName() const;
+
+        virtual std::string getType() const;
     };
 }
 

@@ -10,14 +10,15 @@
 
 #include "ParentComponent.hpp"
 
-namespace nts {
+namespace nts
+{
     class OutputComponent : public virtual ParentComponent
     {
         size_t _pin_no = 1;
 
         std::size_t _tick = 0;
 
-        nts::Tristate _state = nts::Tristate::UNDEFINED;
+        nts::Tristate *_state;
     public:
         explicit OutputComponent(const std::string &name);
 
@@ -29,7 +30,7 @@ namespace nts {
 
         void setState(nts::Tristate state);
 
-        nts::Tristate getState() const;
+        nts::Tristate *getState() const;
     };
 }
 
