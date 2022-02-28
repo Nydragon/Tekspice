@@ -35,7 +35,7 @@ void nts::ClockComponent::simulate(std::size_t tick)
     this->setState(*this->_state == nts::Tristate::TRUE
                    ? nts::Tristate::FALSE
                    : *this->_state == nts::Tristate::FALSE
-                     ? nts::Tristate::FALSE
+                     ? nts::Tristate::TRUE
                      : nts::Tristate::UNDEFINED);
 }
 

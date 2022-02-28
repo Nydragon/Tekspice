@@ -22,7 +22,7 @@ class Execution
 public:
     explicit Execution(const std::string &filename);
 
-    ~Execution();
+    ~Execution() = default;
 
     std::string getValue();
 
@@ -30,7 +30,6 @@ public:
 
     void run();
 
-    // function dispo
     void display();
 
     void input(const std::string &value);
@@ -47,10 +46,12 @@ public:
 
     std::unique_ptr<nts::IComponent> createComponent(const std::string &type);
 
+    void createComponent(const std::string &type, const std::string &name);
+
 private:
     std::string _value;
 
-    std::unordered_map<std::string, nts::IComponent *> circuitry;
+    std::unordered_map<std::string, std::shared_ptr<nts::IComponent>> circuitry;
 
     std::unordered_map<std::string, nts::InputComponent *> _inputs;
 

@@ -7,9 +7,9 @@
 # in_c --------------------------------------------2-+---/
 
 .chipsets:
-input in_a
-input in_b
-input in_c
+clock in_a
+clock in_b
+clock in_c
 output out
 4069 not
 4071 or
