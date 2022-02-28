@@ -59,22 +59,25 @@ int nts::ParentComponent::findPinIndex(size_t pin) const
 
 void nts::ParentComponent::dump() const
 {
-    int col_w = 15;
+    int w = 15;
 
     std::cout << "Component " << this->getType() << " \"" << this->getName() << "\"" << std::endl;
-    std::cout << std::setw(col_w) << "Pin No."
-              << std::setw(col_w) << "outer con"
-              << std::setw(col_w) << "outer con Pin"
-              << std::setw(col_w) << "inner con"
-              << std::setw(col_w) << "inner con Pin"
-              << std::setw(col_w) << "state" << std::endl;
+    std::cout << std::setw(w) << "Pin No."
+              << std::setw(w) << "outer con"
+              << std::setw(w) << "outer con Pin"
+              << std::setw(w) << "inner con"
+              << std::setw(w) << "inner con Pin"
+              << std::setw(w) << "state" << std::endl;
+
     for (auto &pin: this->pins) {
-        std::cout << std::setw(col_w) << pin.number
-                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? "YES" : "N/A")
-                  << std::setw(col_w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? "YES" : "N/A")
-                  << std::setw(col_w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
-                  << std::setw(col_w) << TRI(pin.state)
+        std::cout << std::setw(w) << pin.number
+                  << std::setw(w)
+                  << (pin.outer_connection.comp_r != nullptr ? dynamic_cast<ParentComponent *>(pin.outer_connection.comp_r)->getName()
+                                                             : "N/A")
+                  << std::setw(w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
+                  << std::setw(w) << (pin.inner_connection.gate_r != nullptr ? "YES" : "N/A")
+                  << std::setw(w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
+                  << std::setw(w) << TRI(pin.state)
                   << std::endl;
     }
 }
