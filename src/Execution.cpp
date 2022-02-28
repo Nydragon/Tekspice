@@ -29,11 +29,10 @@ void Execution::setValue(const std::string &value)
 
 void Execution::display()
 {
-    std::map<std::string, nts::Tristate> ordered(this->_inputs.begin(), this->_inputs.end());
     std::cout << "tick: " << this->_tick << std::endl;
     std::cout << "input(s):" << std::endl;
-    for(auto it = ordered.begin(); it != ordered.end(); ++it)
-        std::cout << "  " << it->first << ": " << TRI(it->second) << std::endl;
+    for (auto const &pair: this->_inputs)
+        std::cout << "  " << pair.first << ": " << TRI(pair.second->getState()) << std::endl;
     std::cout << "output(s):" << std::endl;
     for (auto const &pair: this->_outputs)
         std::cout << "  " << pair.first << ": " << TRI(pair.second->getState()) << std::endl;
