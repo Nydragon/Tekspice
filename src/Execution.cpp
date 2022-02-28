@@ -174,7 +174,7 @@ void Execution::loadFile(const std::string &filename)
         if (section == 1) {
             if (this->circuitry.contains(right))
                 throw nts::NameUsedError(right);
-            createComponent(left, right);
+            this->circuitry[right] = createComponent(left, right);
         }
 
         if (section == 2) {
@@ -197,11 +197,10 @@ void Execution::loadFile(const std::string &filename)
 
 std::unique_ptr<nts::IComponent> Execution::createComponent(const std::string &type)
 {
-    return std::unique_ptr<nts::IComponent>(new nts::GenericComponent(type, type + std::to_string(random() % 100000)));
+    return createComponent(type, type + std::to_string(random() % 100000));
 }
 
-
-void Execution::createComponent(const std::string &type, const std::string &name)
+std::unique_ptr<nts::IComponent> Execution::createComponent(const std::string &type, const std::string &name)
 {
     nts::IComponent *component;
 
@@ -213,14 +212,13 @@ void Execution::createComponent(const std::string &type, const std::string &name
         component = this->_outputs[name];
     } else if (type == "clock") {
         this->_inputs[name] = reinterpret_cast<nts::InputComponent *>(new nts::ClockComponent(name));
-        component =this->_inputs[name];
-    }
-    else if (type == "true")
+        component = this->_inputs[name];
+    } else if (type == "true")
         component = new nts::TrueComponent(name);
     else if (type == "false")
         component = new nts::FalseComponent(name);
     else
         component = new nts::GenericComponent(type, name);
 
-    this->circuitry[name] = std::shared_ptr<nts::IComponent>(component);
+    return std::unique_ptr<nts::IComponent>(component);
 }

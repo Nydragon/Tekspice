@@ -46,12 +46,12 @@ public:
 
     std::unique_ptr<nts::IComponent> createComponent(const std::string &type);
 
-    void createComponent(const std::string &type, const std::string &name);
+    std::unique_ptr<nts::IComponent> createComponent(const std::string &type, const std::string &name);
 
 private:
     std::string _value;
 
-    std::unordered_map<std::string, std::shared_ptr<nts::IComponent>> circuitry;
+    std::unordered_map<std::string, std::unique_ptr<nts::IComponent>> circuitry;
 
     std::unordered_map<std::string, nts::InputComponent *> _inputs;
 
