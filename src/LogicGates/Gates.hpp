@@ -12,7 +12,6 @@
 #include "./NandGate.hpp"
 #include "./NorGate.hpp"
 #include "./NotGate.hpp"
-#include "./NotNotGate.hpp"
 #include "./OrGate.hpp"
 #include "./XnorGate.hpp"
 #include "./XorGate.hpp"

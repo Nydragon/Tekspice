@@ -16,19 +16,19 @@ namespace nts {
     class GenericGate: virtual public ILogicGate
     {
         public:
-            GenericGate(const std::string &name);
-            ~GenericGate() = default;
-            nts::Tristate getInput1();
-            nts::Tristate getInput2();
-            nts::Tristate getOutput();
+            explicit GenericGate(const std::string &name);
+            ~GenericGate() override = default;
+            nts::Tristate getInput1() override;
+            nts::Tristate getInput2() override;
+            nts::Tristate getOutput() override;
             std::string getName();
-            void setInput1(nts::Tristate);
-            void setInput2(nts::Tristate);
-            void setOutput(nts::Tristate);
-            int findPinIndex(size_t pin) const override;
+            void setInput1(nts::Tristate) override;
+            void setInput2(nts::Tristate) override;
+            void setOutput(nts::Tristate) override;
+            [[nodiscard]] int findPinIndex(size_t pin) const override;
             void setLink(std::size_t pin, nts::ILogicGate &other, std::size_t otherPin) override;
             void setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin) override;
-            void dump();
+            void dump() override;
             void setPin(size_t pin, nts::Tristate state) override;
             pin_t &outputPin() override;
             std::vector<nts::pin_t> getPins() override;

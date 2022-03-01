@@ -15,6 +15,7 @@ FILES = $(LOCATION)/main.cpp\
 		$(LOCATION)/Components/FalseComponent.cpp\
 		$(LOCATION)/Components/TrueComponent.cpp\
 		$(LOCATION)/Components/ClockComponent.cpp\
+		$(LOCATION)/Components/BinaryFullAdder.cpp\
 		$(LOCATION)/NanoTekSpiceError.cpp\
 		$(LOCATION)/Execution.cpp\
 		$(LOCATION)/LogicGates/*.cpp
