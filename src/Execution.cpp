@@ -27,18 +27,33 @@ void Execution::setValue(const std::string &value)
     this->_value = value;
 }
 
+template<typename T>
+std::vector<std::string> getKeys(std::unordered_map<std::string, T> map)
+{
+    std::vector<std::string> keys;
+
+    for (auto const &pair: map) {
+        keys.push_back(pair.first);
+    }
+
+    std::sort(keys.begin(), keys.end());
+    return keys;
+}
+
 void Execution::display()
 {
     std::cout << "tick: " << this->_tick << std::endl;
     std::cout << "input(s):" << std::endl;
-    for (auto const &pair: this->_inputs) {
-        std::string state = ((pair.second->getState()) == nts::Tristate::UNDEFINED ? "U" : std::to_string((pair.second->getState())));
-        std::cout << "  " << pair.first << ": " << state << std::endl;
+
+    for (auto const &key: getKeys(this->_inputs)) {
+        std::string state = this->_inputs[key]->getState() == nts::Tristate::UNDEFINED ? "U" : std::to_string(this->_inputs[key]->getState());
+        std::cout << "  " << key << ": " << state << std::endl;
     }
     std::cout << "output(s):" << std::endl;
-    for (auto const &pair: this->_outputs) {
-        std::string state = ((pair.second->getState()) == nts::Tristate::UNDEFINED ? "U" : std::to_string((pair.second->getState())));
-        std::cout << "  " << pair.first << ": " << state << std::endl;
+    for (auto const &key: getKeys(this->_outputs)) {
+        std::string state = this->_outputs[key]->getState() == nts::Tristate::UNDEFINED ? "U" : std::to_string(this->_outputs[key]->getState
+            ());
+        std::cout << "  " << key << ": " << state << std::endl;
     }
 }
 
