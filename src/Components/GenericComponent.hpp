@@ -24,6 +24,8 @@ namespace nts
 
         std::vector<ILogicGate *> circuitry;
 
+        std::string componentCfgLocation = "src/resources/";
+
     public:
 
         GenericComponent(const std::string &type, const std::string &name);

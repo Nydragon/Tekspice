@@ -15,10 +15,10 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
     : ParentComponent(name, type)
 {
 
-    std::ifstream input_file(nts::componentCfgLocation + type + ".cfg");
+    std::ifstream input_file(this->componentCfgLocation + type + ".cfg");
 
     if (!input_file.is_open())
-        throw nts::FileNotFound(nts::componentCfgLocation + type + ".cfg");
+        throw nts::FileNotFound(this->componentCfgLocation + type + ".cfg");
 
     std::string line;
     const auto r = std::regex(R"(.*?(?=(#|$)))");
