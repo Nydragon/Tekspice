@@ -60,7 +60,7 @@ void Execution::display()
 void Execution::input(const std::string &value)
 {
     std::regex a("[a-zA-Z][a-zA-Z0-9_]*");
-    std::regex b("[U10]");
+    std::regex b("=[U10]");
 
     std::smatch match;
 
@@ -72,11 +72,11 @@ void Execution::input(const std::string &value)
     if (buffString.empty() || !this->_inputs.contains(buffString))
         throw nts::NanoTekSpiceError("Input \"" + buffString + "\" does not exist.");
     if (std::regex_search(ALL(value), match, b) == 1) {
-        if (match[0] == "1")
+        if (match[0] == "=1")
             newState = nts::Tristate::TRUE;
-        else if (match[0] == "0")
+        else if (match[0] == "=0")
             newState = nts::Tristate::FALSE;
-        else if (match[0] == "U")
+        else if (match[0] == "=U")
             newState = nts::Tristate::UNDEFINED;
         else
             throw nts::NanoTekSpiceError("Left hand of assignment operator should be 1 or 0.");
