@@ -45,7 +45,7 @@ void Execution::display()
 void Execution::input(const std::string &value)
 {
     std::regex a("[a-zA-Z][a-zA-Z0-9_]*");
-    std::regex b("-?\\d+");
+    std::regex b("[U10]");
 
     std::smatch match;
 
@@ -61,7 +61,7 @@ void Execution::input(const std::string &value)
             newState = nts::Tristate::TRUE;
         else if (match[0] == "0")
             newState = nts::Tristate::FALSE;
-        else if (match[0] == "-1")
+        else if (match[0] == "U")
             newState = nts::Tristate::UNDEFINED;
         else
             throw nts::NanoTekSpiceError("Left hand of assignment operator should be 1 or 0.");
@@ -103,7 +103,7 @@ void Execution::dump()
 
 int Execution::isInputAssignment(const std::string &line)
 {
-    std::regex a("[[:alpha:]][[:alpha:]0-9_]*=-?\\d+");
+    std::regex a("[[:alpha:]][[:alpha:]0-9_]*=[U10]");
     std::smatch match;
 
     return std::regex_search(ALL(line), match, a);
