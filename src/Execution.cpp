@@ -31,11 +31,15 @@ void Execution::display()
 {
     std::cout << "tick: " << this->_tick << std::endl;
     std::cout << "input(s):" << std::endl;
-    for (auto const &pair: this->_inputs)
-        std::cout << "  " << pair.first << ": " << TRI(pair.second->getState()) << std::endl;
+    for (auto const &pair: this->_inputs) {
+        std::string state = ((pair.second->getState()) == nts::Tristate::UNDEFINED ? "U" : std::to_string((pair.second->getState())));
+        std::cout << "  " << pair.first << ": " << state << std::endl;
+    }
     std::cout << "output(s):" << std::endl;
-    for (auto const &pair: this->_outputs)
-        std::cout << "  " << pair.first << ": " << TRI(pair.second->getState()) << std::endl;
+    for (auto const &pair: this->_outputs) {
+        std::string state = ((pair.second->getState()) == nts::Tristate::UNDEFINED ? "U" : std::to_string((pair.second->getState())));
+        std::cout << "  " << pair.first << ": " << state << std::endl;
+    }
 }
 
 void Execution::input(const std::string &value)

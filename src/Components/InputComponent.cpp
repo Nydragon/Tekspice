@@ -37,9 +37,11 @@ void nts::InputComponent::setState(nts::Tristate state)
     *this->_state = state;
 }
 
-nts::Tristate *nts::InputComponent::getState() const
+nts::Tristate nts::InputComponent::getState() const
 {
-    return this->_state;
+    int index = this->findPinIndex(1);
+
+    return *this->pins[index].state;
 }
 
 nts::InputComponent::~InputComponent()

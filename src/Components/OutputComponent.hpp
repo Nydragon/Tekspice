@@ -30,7 +30,7 @@ namespace nts
 
         void setState(nts::Tristate state);
 
-        nts::Tristate *getState() const;
+        nts::Tristate getState() const;
     };
 }
 
