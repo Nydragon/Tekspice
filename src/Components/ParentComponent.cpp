@@ -9,6 +9,8 @@
 #include "ParentComponent.hpp"
 #include "../NanoTekSpiceError.hpp"
 
+#define IS_BOOL(state) (state == nts::Tristate::TRUE || state == nts::Tristate::FALSE ? true: false)
+
 std::string nts::ParentComponent::getName() const
 {
     return this->_name;
@@ -29,6 +31,8 @@ void nts::ParentComponent::setLink(std::size_t pin, nts::IComponent &other, std:
 {
     int index = this->findPinIndex(pin);
 
+    nts::Tristate state1 = *this->pins[index].state;
+
     auto state = std::make_shared<nts::Tristate>(nts::Tristate::UNDEFINED);
 
     this->pins[index].outer_connection.comp_r = &other;
@@ -39,9 +43,13 @@ void nts::ParentComponent::setLink(std::size_t pin, nts::IComponent &other, std:
 
     int otherIndex = downcastedComponent->findPinIndex(otherPin);
 
+    nts::Tristate state2 = *downcastedComponent->pins[otherIndex].state;
+
     downcastedComponent->pins[otherIndex].outer_connection.comp_r = this;
     downcastedComponent->pins[otherIndex].outer_connection.pin = pin;
     downcastedComponent->pins[otherIndex].state = state;
+
+    *state = IS_BOOL(state1) ? state1 : IS_BOOL(state2) ? state2 : *state;
 }
 
 int nts::ParentComponent::findPinIndex(size_t pin) const

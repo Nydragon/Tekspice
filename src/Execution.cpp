@@ -164,7 +164,8 @@ void Execution::loadFile(const std::string &filename)
                 continue;
             }
 
-            char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
+            char *c_line = const_cast<char *>(line.c_str());
+            char *token = std::strtok(c_line, " ");
             if (!token)
                 throw nts::SyntaxError(line, line_no);
             std::string left = std::string(token);
