@@ -70,6 +70,13 @@ namespace nts
         explicit ComponentNotFoundError(const std::string &name, int line_number);
     };
 
+    class FileFormatError : public NanoTekSpiceError
+    {
+    public:
+        explicit FileFormatError(const std::string &path);
+    };
+
+
     void validateArgs(int count, char *args_c[]);
 }
 

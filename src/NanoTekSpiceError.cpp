@@ -61,6 +61,8 @@ void nts::validateArgs(int count, char *args_c[])
             std::ifstream input_file(arg);
             if (!input_file.is_open())
                 throw nts::FileNotFound(arg);
+            if (!arg.ends_with(".nts"))
+                throw nts::FileFormatError(arg);
         }
     }
 }
@@ -82,5 +84,10 @@ nts::ComponentNotFoundError::ComponentNotFoundError(const std::string &name)
 
 nts::ComponentNotFoundError::ComponentNotFoundError(const std::string &name, int line_no)
     : NanoTekSpiceError("Line " + std::to_string(line_no) + ": Component \"" + name + "\" does not exist.")
+{
+}
+
+nts::FileFormatError::FileFormatError(const std::string &path)
+        : NanoTekSpiceError("File: " + path + " has bad extension.")
 {
 }
