@@ -19,6 +19,8 @@
     std::cout << "NOT IMPLEMENTED: " << a << std::endl; \
     std::cout << "line "<< __LINE__  << " | " << __func__ << "() | " << __FILE__ << std::endl; \
 } while(0)
+#define IS_BOOL(state) (state == nts::Tristate::TRUE || state == nts::Tristate::FALSE ? true: false)
+
 
 #define TRI(state) ((*state) == nts::Tristate::UNDEFINED ? "U" : std::to_string((*state)))
 
@@ -43,7 +45,7 @@ namespace nts
     typedef struct
     {
         size_t number = 0;
-        std::shared_ptr<nts::Tristate> state = std::make_shared<nts::Tristate>();
+        std::shared_ptr<nts::Tristate> state = nullptr;
         componentConnection outer_connection = componentConnection();
         logicGateConnection inner_connection = logicGateConnection();
     } pin_t;

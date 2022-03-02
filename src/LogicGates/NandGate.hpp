@@ -15,9 +15,9 @@ namespace nts {
     class NandGate: virtual public GenericGate
     {
         public:
-            NandGate(std::string _name);
-            ~NandGate() = default;
-            nts::Tristate compute();
+            explicit NandGate(std::string _name);
+            ~NandGate() override = default;
+            nts::Tristate compute() override;
     };
 };
 

@@ -1,0 +1,15 @@
+.chipsets:
+input a
+input b
+input c
+input d
+4002 or
+4081 and
+output s
+.links:
+a:1 or:1
+b:1 or:2
+c:1 or:3
+or:4 and:1
+d:1 and:2
+and:3 s:1

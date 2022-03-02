@@ -14,8 +14,8 @@ namespace nts {
     class AndGate: virtual public GenericGate
     {
         public:
-            AndGate(const std::string& _name);
-            ~AndGate() = default;
+            explicit AndGate(const std::string& _name);
+            ~AndGate() override = default;
             nts::Tristate compute() override;
     };
 };

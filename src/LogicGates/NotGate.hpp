@@ -15,13 +15,13 @@ namespace nts
     class NotGate : virtual public GenericGate
     {
     public:
-        NotGate(const std::string &name);
+        explicit NotGate(const std::string &name);
 
-        ~NotGate() = default;
+        ~NotGate() override = default;
 
-        nts::Tristate compute();
+        nts::Tristate compute() override;
 
-        pin_t &outputPin() override;
+        std::vector<nts::pin_t *> outputPins() override;
     };
 };
 

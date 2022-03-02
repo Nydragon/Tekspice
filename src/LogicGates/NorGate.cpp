@@ -11,9 +11,9 @@ nts::NorGate::NorGate(std::string name) : GenericGate(name) {}
 
 nts::Tristate nts::NorGate::compute()
 {
-    if (getInput1() == FALSE && getInput2() == FALSE)
-        setOutput(nts::Tristate::TRUE);
+    if (this->getPin(1) == nts::Tristate::FALSE && this->getPin(2) == nts::Tristate::FALSE)
+        this->setPin(3, nts::Tristate::TRUE);
     else
-        setOutput(nts::Tristate::FALSE);
-    return getOutput();
+        this->setPin(3, nts::Tristate::FALSE);
+    return this->getPin(3);
 }

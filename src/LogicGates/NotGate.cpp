@@ -13,14 +13,16 @@ nts::NotGate::NotGate(const std::string &name) : GenericGate(name)
 
 nts::Tristate nts::NotGate::compute()
 {
-    if (getInput1() == TRUE)
-        setOutput(nts::Tristate::FALSE);
+    if (this->getPin(1) == nts::Tristate::TRUE)
+        this->setPin(2, nts::Tristate::FALSE);
     else
-        setOutput(nts::Tristate::TRUE);
-    return getOutput();
+        this->setPin(2, nts::Tristate::TRUE);
+    return this->getPin(2);
 }
 
-nts::pin_t &nts::NotGate::outputPin()
+std::vector<nts::pin_t *> nts::NotGate::outputPins()
 {
-    return this->pins[1];
+    std::vector<pin_t *> res(1);
+    res[0] = &this->pins[this->findPinIndex(2)];
+    return res;
 }

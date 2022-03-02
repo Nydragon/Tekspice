@@ -13,9 +13,9 @@ nts::OrGate::OrGate(std::string name) : GenericGate(name)
 
 nts::Tristate nts::OrGate::compute()
 {
-    if (getInput1() == TRUE || getInput2() == TRUE)
-        setOutput(nts::Tristate::TRUE);
-    else
-        setOutput(nts::Tristate::FALSE);
-    return getOutput();
+    if (this->getPin(1) == nts::Tristate::TRUE || this->getPin(2) == nts::Tristate::TRUE) {
+        this->setPin(3, nts::Tristate::TRUE);
+    } else
+        this->setPin(3, nts::Tristate::FALSE);
+    return this->getPin(3);
 }

@@ -15,9 +15,9 @@ namespace nts {
     class XorGate: virtual public GenericGate
     {
         public:
-            XorGate(std::string _name);
-            ~XorGate() = default;
-            nts::Tristate compute();
+            explicit XorGate(std::string _name);
+            ~XorGate() override = default;
+            nts::Tristate compute() override;
     };
 };
 

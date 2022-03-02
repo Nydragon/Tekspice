@@ -15,9 +15,9 @@ namespace nts {
     class NorGate: virtual public GenericGate
     {
         public:
-            NorGate(std::string _name);
-            ~NorGate() = default;
-            nts::Tristate compute();
+            explicit NorGate(std::string _name);
+            ~NorGate() override = default;
+            nts::Tristate compute() override;
     };
 };
 

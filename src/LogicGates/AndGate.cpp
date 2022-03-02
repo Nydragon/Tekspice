@@ -14,9 +14,9 @@ nts::AndGate::AndGate(const std::string &name) : GenericGate(name)
 
 nts::Tristate nts::AndGate::compute()
 {
-    if (getInput1() == TRUE && getInput2() == TRUE)
-        setOutput(nts::Tristate::TRUE);
+    if (this->getPin(1) == nts::Tristate::TRUE && this->getPin(2) == nts::Tristate::TRUE)
+        this->setPin(3, nts::Tristate::TRUE);
     else
-        setOutput(nts::Tristate::FALSE);
-    return getOutput();
+        this->setPin(3, nts::Tristate::FALSE);
+    return this->getPin(3);
 }

@@ -66,17 +66,12 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
             size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
             size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
             int gateIndex = findGateIndex(compNameLeft);
-            int pin_i = this->findPinIndex(pinNumRight);
 
             if (compNameRight != "self") {
                 int otherGateIndex = findGateIndex(compNameRight);
 
                 this->circuitry[gateIndex]->setLink(pinNumLeft, *this->circuitry[otherGateIndex], pinNumRight);
             } else {
-
-                this->pins[pin_i].number = this->pins[pin_i].number ? this->pins[pin_i].number : pinNumRight;
-                this->pins[pin_i].inner_connection.pin = pinNumLeft;
-                this->pins[pin_i].inner_connection.gate_r = this->circuitry[gateIndex];
                 this->circuitry[gateIndex]->setLink(pinNumLeft, *this, pinNumRight);
             }
         }
@@ -91,16 +86,16 @@ void nts::GenericComponent::simulate(std::size_t tick)
     }
     int calculated = 0;
 
-    while (calculated < 1) {
+    while (calculated != 1) {
         for (auto &gate: this->circuitry) {
-            std::vector<nts::pin_t> gatePins = gate->getPins();
+            gate->compute();
 
-            nts::Tristate newState = gate->compute();
-
-            if (gate->outputPin().outer_connection.pin > 0) {
-                *(this->pins[this->findPinIndex(gate->outputPin().outer_connection.pin)].state) = newState;
-            } else if (gate->outputPin().inner_connection.pin > 0) {
-                gate->outputPin().inner_connection.gate_r->setPin(gate->outputPin().inner_connection.pin, newState);
+            for (pin_t *outPin: gate->outputPins()) {
+                if (outPin->outer_connection.pin > 0) {
+                    *this->pins[this->findPinIndex(outPin->outer_connection.pin)].state = *outPin->state;
+                } else if (outPin->inner_connection.pin > 0) {
+                    outPin->inner_connection.gate_r->setPin(outPin->inner_connection.pin, *outPin->state);
+                }
             }
         }
         calculated++;

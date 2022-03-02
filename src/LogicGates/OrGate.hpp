@@ -15,9 +15,9 @@ namespace nts {
     class OrGate: virtual public GenericGate
     {
         public:
-            OrGate(std::string _name);
-            ~OrGate() = default;
-            nts::Tristate compute();
+            explicit OrGate(std::string _name);
+            ~OrGate() override = default;
+            nts::Tristate compute() override;
     };
 };
 

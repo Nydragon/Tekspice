@@ -32,23 +32,11 @@ namespace nts
 
         virtual void dump() = 0;
 
-        virtual nts::Tristate getInput1() = 0;
-
-        virtual nts::Tristate getInput2() = 0;
-
-        virtual nts::Tristate getOutput() = 0;
-
-        virtual void setInput1(nts::Tristate) = 0;
-
-        virtual void setInput2(nts::Tristate) = 0;
-
-        virtual void setOutput(nts::Tristate) = 0;
-
         virtual void setPin(size_t pin, nts::Tristate state) = 0;
 
-        virtual pin_t &outputPin() = 0;
+        virtual nts::Tristate getPin(size_t pin) const = 0;
 
-        virtual std::vector<pin_t> getPins() = 0;
+        virtual std::vector<nts::pin_t *> outputPins() = 0;
     };
 }
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_ILOGICGATE_HPP

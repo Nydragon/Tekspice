@@ -11,11 +11,11 @@ nts::XorGate::XorGate(std::string name) : GenericGate(name) {}
 
 nts::Tristate nts::XorGate::compute()
 {
-    if (getInput1() == TRUE && getInput2() == TRUE)
-        setOutput(nts::Tristate::FALSE);
-    else if (getInput1() == FALSE && getInput2() == FALSE)
-        setOutput(nts::Tristate::FALSE);
+    if (this->getPin(1) == nts::Tristate::TRUE && this->getPin(2) == nts::Tristate::TRUE)
+        this->setPin(3, nts::Tristate::FALSE);
+    else if (this->getPin(1) == FALSE && this->getPin(2) == FALSE)
+        this->setPin(3, nts::Tristate::FALSE);
     else
-        setOutput(nts::Tristate::TRUE);
-    return getOutput();
+        this->setPin(3, nts::Tristate::TRUE);
+    return this->getPin(3);
 }
