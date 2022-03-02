@@ -49,8 +49,6 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
         if (!token)
             throw nts::SyntaxError(line, line_no);
 
-
-
         left = std::string(token);
 
         if (!(token = std::strtok(nullptr, " ")))
