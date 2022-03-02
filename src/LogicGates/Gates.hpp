@@ -15,5 +15,6 @@
 #include "./OrGate.hpp"
 #include "./XnorGate.hpp"
 #include "./XorGate.hpp"
+#include "./SplitterGate.hpp"
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GATES_HPP

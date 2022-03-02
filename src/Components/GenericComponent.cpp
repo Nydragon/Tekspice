@@ -21,11 +21,14 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
         throw nts::FileNotFound(this->componentCfgLocation + type + ".cfg");
 
     std::string line;
+    int line_no = 0;
     const auto r = std::regex(R"(.*?(?=(#|$)))");
     int section = 99;
 
     while (std::getline(input_file, line)) {
         line = std::regex_token_iterator(C_ALL(line), r, 0)->str();
+        if (line.empty())
+            continue;
         if (line[0] == '.') {
             if (line == ".pins") {
                 std::getline(input_file, line);
@@ -40,14 +43,20 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
             continue;
         }
 
-        char *token = std::strtok(const_cast<char *>(std::string(line).c_str()), " ");
-
+        char *c_line = const_cast<char *>(line.c_str());
+        char *token = std::strtok(c_line, " ");
         std::string left, right;
+        if (!token)
+            throw nts::SyntaxError(line, line_no);
 
-        if (token)
-            left = std::string(token);
-        if ((token = std::strtok(nullptr, " ")))
-            right = std::string(token);
+
+
+        left = std::string(token);
+
+        if (!(token = std::strtok(nullptr, " ")))
+            throw nts::SyntaxError(line, line_no);
+
+        right = std::string(token);
 
         if (section == 1) {
             this->circuitry.push_back(GenericComponent::fetchGate(left, right));
@@ -75,6 +84,7 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
                 this->circuitry[gateIndex]->setLink(pinNumLeft, *this, pinNumRight);
             }
         }
+        line_no++;
     }
 }
 
@@ -123,8 +133,10 @@ nts::ILogicGate *nts::GenericComponent::fetchGate(const std::string &type, const
         return new XnorGate(name);
     else if ("not" == type)
         return new NotGate(name);
+    else if ("split" == type)
+        return new SplitterGate(name);
     else
-        throw nts::NanoTekSpiceError("Gate: \"" + name + "\" not found");
+        throw nts::NanoTekSpiceError("Gate: \"" + type + "\" not found");
 }
 
 int nts::GenericComponent::findGateIndex(const std::string &name) const

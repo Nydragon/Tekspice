@@ -247,8 +247,8 @@ std::unique_ptr<nts::IComponent> Execution::createComponent(const std::string &t
         component = new nts::TrueComponent(name);
     else if (type == "false")
         component = new nts::FalseComponent(name);
-    else if (type == "4008")
-        component = new nts::BinaryFullAdder(name);
+//    else if (type == "4008")
+//        component = new nts::BinaryFullAdder(name);
     else
         component = new nts::GenericComponent(type, name);
 
