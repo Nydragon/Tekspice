@@ -94,7 +94,7 @@ void nts::GenericComponent::simulate(std::size_t tick)
     }
     int calculated = 0;
 
-    while (calculated != 1) {
+    while (calculated != 2) {
         for (auto &gate: this->circuitry) {
             gate->compute();
 
