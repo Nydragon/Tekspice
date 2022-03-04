@@ -88,13 +88,15 @@ nts::GenericComponent::GenericComponent(const std::string &type, const std::stri
 
 void nts::GenericComponent::simulate(std::size_t tick)
 {
-    for (auto &pin: this->pins) {
-        if (pin.inner_connection.gate_r != nullptr)
-            pin.inner_connection.gate_r->setPin(pin.inner_connection.pin, *pin.state);
-    }
+
     int calculated = 0;
 
     while (calculated != 2) {
+        for (auto &pin: this->pins) {
+            if (pin.inner_connection.gate_r != nullptr)
+                pin.inner_connection.gate_r->setPin(pin.inner_connection.pin, *pin.state);
+        }
+
         for (auto &gate: this->circuitry) {
             gate->compute();
 

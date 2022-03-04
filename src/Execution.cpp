@@ -200,34 +200,33 @@ void Execution::loadFile(const std::string &filename)
             if (section == 2) {
                 const auto beforeCol = std::regex(".+(?=:)");
                 const auto afterCol = std::regex(":.+");
-                std::string compNameLeft = std::regex_token_iterator(C_ALL(left), beforeCol, 0)->str();
-                if (compNameLeft.empty())
+                std::smatch match;
+
+                std::regex_search(left, match, beforeCol);
+                if (match.empty())
                     throw nts::RegexFailedError(line_no);
-                std::string compNameRight = std::regex_token_iterator(C_ALL(right), beforeCol, 0)->str();
-                if (compNameRight.empty())
+                std::string compNameLeft = match.str();
+                std::regex_search(right, match, beforeCol);
+                if (match.empty())
                     throw nts::RegexFailedError(line_no);
+                std::string compNameRight = match.str();
+                std::regex_search(left, match, afterCol);
+                if (match.empty())
+                    throw nts::RegexFailedError(line_no);
+                std::string pinNumLeftStr = match.str();
+                std::regex_search(right, match, afterCol);
+                if (match.empty())
+                    throw nts::RegexFailedError(line_no);
+                std::string pinNumRightStr = match.str();
+
                 /**
                  * I need to exclude the colon from the match but
                  * \K and lookbehind do not work in c++ regex flavour
                  * therefore I skip the first character of the match
                  */
 
-                std::smatch matchPinNumLeft;
-                std::smatch matchPinNumRight;
-
-                std::regex_match(left, matchPinNumLeft, afterCol);
-                std::regex_match(right, matchPinNumRight, afterCol);
-
-                if (matchPinNumLeft.empty())
-                    throw nts::RegexFailedError(line_no);
-                if (matchPinNumRight.empty())
-                    throw nts::RegexFailedError(line_no);
-                std::string pinNumLeftStr = matchPinNumLeft.str();
-                std::string pinNumRightStr = matchPinNumRight.str();
-
                 size_t pinNumLeft = std::stoi(&pinNumLeftStr[1]);
                 size_t pinNumRight = std::stoi(&pinNumRightStr[1]);
-                std::cout << pinNumLeft << std::endl;
 
                 if (!this->circuitry.contains(compNameLeft))
                     throw nts::ComponentNotFoundError(compNameLeft, line_no);
