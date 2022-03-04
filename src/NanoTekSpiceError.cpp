@@ -49,21 +49,26 @@ void nts::validateArgs(int count, char *args_c[])
 {
     std::vector<std::string> args;
 
-    for (int i = 1; i < count; i++)
-        args.emplace_back(args_c[i]);
-    if (args.empty())
-        exit(84);
-    for (const auto &arg: args) {
-        if (arg == "-h") {
-            std::cout << "Enter a filename in param : ./nanotekspice [filename]" << std::endl;
-            exit(0);
-        } else {
-            std::ifstream input_file(arg);
-            if (!input_file.is_open())
-                throw nts::FileNotFound(arg);
-            if (!arg.ends_with(".nts"))
-                throw nts::FileFormatError(arg);
+    try {
+        for (int i = 1; i < count; i++)
+            args.emplace_back(args_c[i]);
+        if (args.empty())
+            exit(84);
+        for (const auto &arg: args) {
+            if (arg == "-h") {
+                std::cout << "Enter a filename in param : ./nanotekspice [filename]" << std::endl;
+                exit(0);
+            } else {
+                std::ifstream input_file(arg);
+                if (!input_file.is_open())
+                    throw nts::FileNotFound(arg);
+                if (!arg.ends_with(".nts"))
+                    throw nts::FileFormatError(arg);
+            }
         }
+    } catch (std::exception &err) {
+        std::cerr << err.what() << std::endl;
+        exit(84);
     }
 }
 
