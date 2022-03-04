@@ -13,7 +13,9 @@ nts::NotGate::NotGate(const std::string &name) : GenericGate(name)
 
 nts::Tristate nts::NotGate::compute()
 {
-    if (this->getPin(1) == nts::Tristate::TRUE)
+    if (IS_UNDEFINED(this->getPin(1)))
+        this->setPin(2, nts::Tristate::UNDEFINED);
+    else if (this->getPin(1) == nts::Tristate::TRUE)
         this->setPin(2, nts::Tristate::FALSE);
     else
         this->setPin(2, nts::Tristate::TRUE);
