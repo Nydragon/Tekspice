@@ -91,10 +91,10 @@ void Execution::simulate()
     this->_tick++;
     for (auto i: this->_inputs)
         i.second->simulate(this->_tick);
-    for (const auto &i: this->circuitry)
-        i.second->simulate(this->_tick);
-    for (const auto &i: this->circuitry)
-        i.second->simulate(this->_tick);
+
+    for (int j = 0; j < 4; j++)
+        for (const auto &i: this->circuitry)
+            i.second->simulate(this->_tick);
 }
 
 void Execution::loop()
