@@ -2,4 +2,4 @@
 input i
 output o
 .links:
-a:1 o:1
+a:1 o:

@@ -77,6 +77,13 @@ namespace nts
     };
 
 
+    class RegexFailedError : public NanoTekSpiceError
+    {
+    public:
+        explicit RegexFailedError(int line_number);
+    };
+
+
     void validateArgs(int count, char *args_c[]);
 }
 

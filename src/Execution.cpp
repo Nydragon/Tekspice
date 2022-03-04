@@ -46,7 +46,8 @@ void Execution::display()
     std::cout << "input(s):" << std::endl;
 
     for (auto const &key: getKeys(this->_inputs)) {
-        std::string state = this->_inputs[key]->getState() == nts::Tristate::UNDEFINED ? "U" : std::to_string(this->_inputs[key]->getState());
+        std::string state =
+            this->_inputs[key]->getState() == nts::Tristate::UNDEFINED ? "U" : std::to_string(this->_inputs[key]->getState());
         std::cout << "  " << key << ": " << state << std::endl;
     }
     std::cout << "output(s):" << std::endl;
@@ -200,14 +201,33 @@ void Execution::loadFile(const std::string &filename)
                 const auto beforeCol = std::regex(".+(?=:)");
                 const auto afterCol = std::regex(":.+");
                 std::string compNameLeft = std::regex_token_iterator(C_ALL(left), beforeCol, 0)->str();
+                if (compNameLeft.empty())
+                    throw nts::RegexFailedError(line_no);
                 std::string compNameRight = std::regex_token_iterator(C_ALL(right), beforeCol, 0)->str();
+                if (compNameRight.empty())
+                    throw nts::RegexFailedError(line_no);
                 /**
                  * I need to exclude the colon from the match but
                  * \K and lookbehind do not work in c++ regex flavour
                  * therefore I skip the first character of the match
                  */
-                size_t pinNumLeft = std::stoi(&std::regex_token_iterator(C_ALL(left), afterCol, 0)->str()[1]);
-                size_t pinNumRight = std::stoi(&std::regex_token_iterator(C_ALL(right), afterCol, 0)->str()[1]);
+
+                std::smatch matchPinNumLeft;
+                std::smatch matchPinNumRight;
+
+                std::regex_match(left, matchPinNumLeft, afterCol);
+                std::regex_match(right, matchPinNumRight, afterCol);
+
+                if (matchPinNumLeft.empty())
+                    throw nts::RegexFailedError(line_no);
+                if (matchPinNumRight.empty())
+                    throw nts::RegexFailedError(line_no);
+                std::string pinNumLeftStr = matchPinNumLeft.str();
+                std::string pinNumRightStr = matchPinNumRight.str();
+
+                size_t pinNumLeft = std::stoi(&pinNumLeftStr[1]);
+                size_t pinNumRight = std::stoi(&pinNumRightStr[1]);
+                std::cout << pinNumLeft << std::endl;
 
                 if (!this->circuitry.contains(compNameLeft))
                     throw nts::ComponentNotFoundError(compNameLeft, line_no);
@@ -247,8 +267,6 @@ std::unique_ptr<nts::IComponent> Execution::createComponent(const std::string &t
         component = new nts::TrueComponent(name);
     else if (type == "false")
         component = new nts::FalseComponent(name);
-//    else if (type == "4008")
-//        component = new nts::BinaryFullAdder(name);
     else
         component = new nts::GenericComponent(type, name);
 

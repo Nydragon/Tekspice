@@ -12,6 +12,5 @@
 #include "./TrueComponent.hpp"
 #include "./FalseComponent.hpp"
 #include "./ClockComponent.hpp"
-#include "./BinaryFullAdder.hpp"
 
 #endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_COMPONENTS_HPP

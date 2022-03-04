@@ -88,6 +88,11 @@ nts::ComponentNotFoundError::ComponentNotFoundError(const std::string &name, int
 }
 
 nts::FileFormatError::FileFormatError(const std::string &path)
-        : NanoTekSpiceError("File: " + path + " has bad extension.")
+    : NanoTekSpiceError("File: " + path + " has bad extension.")
+{
+}
+
+nts::RegexFailedError::RegexFailedError(int line_no)
+    : NanoTekSpiceError("Line " + std::to_string(line_no) + ": Regex evaluation failed.")
 {
 }
