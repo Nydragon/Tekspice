@@ -23,7 +23,7 @@ SRC =  $(FILES)
 
 OBJ = $(SRC:.c=.o)
 
-NAME = nanotekspice
+NAME = tekspice
 
 CFLAGS = -Wall -Wextra -std=c++20
 

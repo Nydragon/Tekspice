@@ -4,3 +4,5 @@ main.c
 .idea
 nanotekspice
 .vscode
+.direnv
+result

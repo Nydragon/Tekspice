@@ -8,38 +8,34 @@
 #ifndef B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENERICCOMPONENT_HPP
 #define B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENERICCOMPONENT_HPP
 
-#include <string>
-#include <vector>
-#include <deque>
-#include <unordered_map>
 #include "../ILogicGate.hpp"
 #include "../types.hpp"
 #include "ParentComponent.hpp"
+#include <string>
+#include <vector>
 
-namespace nts
-{
-    class GenericComponent : public virtual ParentComponent
-    {
-        size_t _pin_no;
+namespace nts {
+class GenericComponent : public virtual ParentComponent {
+  size_t _pin_no;
 
-        std::vector<ILogicGate *> circuitry;
+  std::vector<ILogicGate *> circuitry;
 
-        std::string componentCfgLocation = "src/resources/";
+  std::string componentCfgLocation = "src/resources/";
 
-    public:
+public:
+  GenericComponent(const std::string &type, const std::string &name);
 
-        GenericComponent(const std::string &type, const std::string &name);
+  ~GenericComponent() override;
 
-        ~GenericComponent() override;
+  void simulate(std::size_t tick) override;
 
-        void simulate(std::size_t tick) override;
+  nts::Tristate compute(std::size_t pin) override;
 
-        nts::Tristate compute(std::size_t pin) override;
+  static ILogicGate *fetchGate(const std::string &type,
+                               const std::string &name);
 
-        static ILogicGate *fetchGate(const std::string &type, const std::string &name);
+  int findGateIndex(const std::string &name) const;
+};
+} // namespace nts
 
-        int findGateIndex(const std::string &name) const;
-    };
-}
-
-#endif //B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENERICCOMPONENT_HPP
+#endif // B_OOP_400_BER_4_1_TEKSPICE_NICOLAS_LATTEMANN_GENERICCOMPONENT_HPP
