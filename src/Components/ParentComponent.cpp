@@ -5,90 +5,89 @@
 ** Description
 */
 
-#include <iomanip>
 #include "ParentComponent.hpp"
 #include "../NanoTekSpiceError.hpp"
+#include <iomanip>
 
-std::string nts::ParentComponent::getName() const
-{
-    return this->_name;
+std::string nts::ParentComponent::getName() const { return this->_name; }
+
+std::string nts::ParentComponent::getType() const { return this->_type; }
+
+nts::ParentComponent::ParentComponent(const std::string &name,
+                                      const std::string &type) {
+  this->_name = name;
+  this->_type = type;
 }
 
-std::string nts::ParentComponent::getType() const
-{
-    return this->_type;
+void nts::ParentComponent::setLink(std::size_t pin, nts::IComponent &other,
+                                   std::size_t otherPin) {
+  auto *downcastedComponent = dynamic_cast<ParentComponent *>(&other);
+  int index = this->findPinIndex(pin);
+  int otherIndex = downcastedComponent->findPinIndex(otherPin);
+
+  nts::Tristate state1 = *this->pins[index].state;
+  nts::Tristate state2 = *downcastedComponent->pins[otherIndex].state;
+  nts::Tristate newState = IS_BOOL(state1)   ? state1
+                           : IS_BOOL(state2) ? state2
+                                             : nts::Tristate::UNDEFINED;
+  auto state = std::make_shared<nts::Tristate>(newState);
+
+  this->pins[index].outer_connection.comp_r = &other;
+  this->pins[index].outer_connection.pin = otherPin;
+  this->pins[index].state = state;
+
+  downcastedComponent->pins[otherIndex].outer_connection.comp_r = this;
+  downcastedComponent->pins[otherIndex].outer_connection.pin = pin;
+  downcastedComponent->pins[otherIndex].state = state;
 }
 
-nts::ParentComponent::ParentComponent(const std::string &name, const std::string &type)
-{
-    this->_name = name;
-    this->_type = type;
+int nts::ParentComponent::findPinIndex(size_t pin) const {
+  int i = 0;
+
+  for (auto &pin_s : this->pins) {
+    if (pin_s.number == pin)
+      return i;
+    i++;
+  }
+
+  throw nts::PinNotFoundError(this->getName(), pin);
 }
 
-void nts::ParentComponent::setLink(std::size_t pin, nts::IComponent &other, std::size_t otherPin)
-{
-    auto *downcastedComponent = dynamic_cast<ParentComponent *>(&other);
-    int index = this->findPinIndex(pin);
-    int otherIndex = downcastedComponent->findPinIndex(otherPin);
+void nts::ParentComponent::dump() const {
+  int w = 15;
 
-    nts::Tristate state1 = *this->pins[index].state;
-    nts::Tristate state2 = *downcastedComponent->pins[otherIndex].state;
-    nts::Tristate newState = IS_BOOL(state1) ? state1 : IS_BOOL(state2) ? state2 : nts::Tristate::UNDEFINED;
-    auto state = std::make_shared<nts::Tristate>(newState);
+  std::cout << "Component " << this->getType() << " \"" << this->getName()
+            << "\"" << std::endl;
+  std::cout << std::setw(w) << "Pin No." << std::setw(w) << "outer con"
+            << std::setw(w) << "outer con Pin" << std::setw(w) << "inner con"
+            << std::setw(w) << "inner con Pin" << std::setw(w) << "state"
+            << std::endl;
 
-    this->pins[index].outer_connection.comp_r = &other;
-    this->pins[index].outer_connection.pin = otherPin;
-    this->pins[index].state = state;
-
-    downcastedComponent->pins[otherIndex].outer_connection.comp_r = this;
-    downcastedComponent->pins[otherIndex].outer_connection.pin = pin;
-    downcastedComponent->pins[otherIndex].state = state;
+  for (auto &pin : this->pins) {
+    std::cout << std::setw(w) << pin.number << std::setw(w)
+              << (pin.outer_connection.comp_r != nullptr
+                      ? dynamic_cast<ParentComponent *>(
+                            pin.outer_connection.comp_r)
+                            ->getName()
+                      : "N/A")
+              << std::setw(w)
+              << (pin.outer_connection.comp_r != nullptr
+                      ? std::to_string(pin.outer_connection.pin)
+                      : "N/A")
+              << std::setw(w)
+              << (pin.inner_connection.gate_r != nullptr ? "YES" : "N/A")
+              << std::setw(w)
+              << (pin.inner_connection.gate_r != nullptr
+                      ? std::to_string(pin.inner_connection.pin)
+                      : "N/A")
+              << std::setw(w) << TRI(pin.state) << std::endl;
+  }
 }
 
-int nts::ParentComponent::findPinIndex(size_t pin) const
-{
-    int i = 0;
-
-    for (auto &pin_s: this->pins) {
-        if (pin_s.number == pin)
-            return i;
-        i++;
-    }
-
-    throw nts::PinNotFoundError(this->getName(), pin);
+void nts::ParentComponent::setName(const std::string &name) {
+  this->_name = name;
 }
 
-void nts::ParentComponent::dump() const
-{
-    int w = 15;
-
-    std::cout << "Component " << this->getType() << " \"" << this->getName() << "\"" << std::endl;
-    std::cout << std::setw(w) << "Pin No."
-              << std::setw(w) << "outer con"
-              << std::setw(w) << "outer con Pin"
-              << std::setw(w) << "inner con"
-              << std::setw(w) << "inner con Pin"
-              << std::setw(w) << "state" << std::endl;
-
-    for (auto &pin: this->pins) {
-        std::cout << std::setw(w) << pin.number
-                  << std::setw(w)
-                  << (pin.outer_connection.comp_r != nullptr ? dynamic_cast<ParentComponent *>(pin.outer_connection.comp_r)->getName()
-                                                             : "N/A")
-                  << std::setw(w) << (pin.outer_connection.comp_r != nullptr ? std::to_string(pin.outer_connection.pin) : "N/A")
-                  << std::setw(w) << (pin.inner_connection.gate_r != nullptr ? "YES" : "N/A")
-                  << std::setw(w) << (pin.inner_connection.gate_r != nullptr ? std::to_string(pin.inner_connection.pin) : "N/A")
-                  << std::setw(w) << TRI(pin.state)
-                  << std::endl;
-    }
-}
-
-void nts::ParentComponent::setName(const std::string &name)
-{
-    this->_name = name;
-}
-
-void nts::ParentComponent::setType(const std::string &type)
-{
-    this->_type = type;
+void nts::ParentComponent::setType(const std::string &type) {
+  this->_type = type;
 }

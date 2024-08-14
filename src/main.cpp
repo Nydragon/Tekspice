@@ -8,15 +8,14 @@
 #include "Execution.hpp"
 #include "NanoTekSpiceError.hpp"
 
-int main(int argc, char *argv[])
-{
-    nts::validateArgs(argc, argv);
+int main(int argc, char *argv[]) {
+  nts::validateArgs(argc, argv);
 
-    auto cli = new Execution(argv[1]);
+  auto cli = new Execution(argv[1]);
 
-    cli->run();
+  cli->run();
 
-    delete cli;
+  delete cli;
 
-    return 0;
+  return 0;
 }
